@@ -14,6 +14,7 @@
 #include <sys/types.h>        /*  socket types              */
 #include <arpa/inet.h>        /*  inet (3) funtions         */
 #include <unistd.h>           /*  misc. UNIX functions      */
+#include <string.h>
 
 #include "helper.h"           /*  our own helper functions  */
 
@@ -32,7 +33,6 @@ int main(int argc, char *argv[]) {
     int       conn_s;                /*  connection socket         */
     short int port;                  /*  port number               */
     struct    sockaddr_in servaddr;  /*  socket address structure  */
-    char      buffer[MAX_LINE];      /*  character buffer          */
     char     *endptr;                /*  for strtol()              */
 
 
@@ -102,11 +102,11 @@ int main(int argc, char *argv[]) {
 	/*  Retrieve an input line from the connected socket
 	    then simply write it back to the same socket.     */
 
-	Readline(conn_s, buffer, MAX_LINE-1);
-	Writeline(conn_s, buffer, strlen(buffer));
-
-
-	/*  Close the connected socket  */
+        char lolcat[1024];
+        int amt = read(conn_s, lolcat, 1024);
+        char canhaz[1025];
+        canhaz = lolcat + "!";
+        write(conn_s, canhaz, amt);
 
 	if ( close(conn_s) < 0 ) {
 	    fprintf(stderr, "ECHOSERV: Error calling close()\n");

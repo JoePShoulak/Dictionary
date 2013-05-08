@@ -104,9 +104,9 @@ int main(int argc, char *argv[]) {
 
         char lolcat[1024];
         int amt = read(conn_s, lolcat, 1024);
-        char canhaz[1025];
-        canhaz = lolcat + "!";
-        write(conn_s, canhaz, amt);
+        char point = '!';
+        lolcat += point;
+        write(conn_s, lolcat, amt);
 
 	if ( close(conn_s) < 0 ) {
 	    fprintf(stderr, "ECHOSERV: Error calling close()\n");

@@ -26,91 +26,99 @@
 
 
 int main(int argc, char *argv[]) {
-    int       list_s;                /*  listening socket          */
-    int       conn_s;                /*  connection socket         */
-    short int port;                  /*  port number               */
-    struct    sockaddr_in servaddr;  /*  socket address structure  */
-    char     *endptr;                /*  for strtol()              */
-
-
-    /*  Get port number from the command line, and
+  int       list_s;                /*  listening socket          */
+  int       conn_s;                /*  connection socket         */
+  short int port;                  /*  port number               */
+  struct    sockaddr_in servaddr;  /*  socket address structure  */
+  char     *endptr;                /*  for strtol()              */
+    /*  Get port number from the command line, an
         set to default port if no arguments were supplied  */
 
-    if ( argc == 2 ) {
-	port = strtol(argv[1], &endptr, 0);
-	if ( *endptr ) {
-	    fprintf(stderr, "ECHOSERV: Invalid port number.\n");
-	    exit(EXIT_FAILURE);
-	}
+  if ( argc == 2 )
+  {
+    port = strtol(argv[1], &endptr, 0);
+    if ( *endptr )
+    {
+      fprintf(stderr, "ECHOSERV: Invalid port number.\n");
+      exit(EXIT_FAILURE);
     }
-    else if ( argc < 2 ) {
-	port = ECHO_PORT;
-    }
-    else {
-	fprintf(stderr, "ECHOSERV: Invalid arguments.\n");
-	exit(EXIT_FAILURE);
-    }
+  }
+  else if ( argc < 2 )
+  {
+    port = ECHO_PORT;
+  }
+  else 
+  {
+    fprintf(stderr, "ECHOSERV: Invalid arguments.\n");
+    exit(EXIT_FAILURE);
+  }
 
 	
-    /*  Create the listening socket  */
+  /*  Create the listening socket  */
 
-    if ( (list_s = socket(AF_INET, SOCK_STREAM, 0)) < 0 ) {
-	fprintf(stderr, "ECHOSERV: Error creating listening socket.\n");
-	exit(EXIT_FAILURE);
-    }
-
-
-    /*  Set all bytes in socket address structure to
-        zero, and fill in the relevant data members   */
-
-    memset(&servaddr, 0, sizeof(servaddr));
-    servaddr.sin_family      = AF_INET;
-    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    servaddr.sin_port        = htons(port);
+  if ( (list_s = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
+  {
+    fprintf(stderr, "ECHOSERV: Error creating listening socket.\n");
+    exit(EXIT_FAILURE);
+  }
 
 
-    /*  Bind our socket addresss to the 
-	listening socket, and call listen()  */
+  /*  Set all bytes in socket address structure to
+      zero, and fill in the relevant data members   */
 
-    int on = 1;
-    setsockopt(list_s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+  memset(&servaddr, 0, sizeof(servaddr));
+  servaddr.sin_family      = AF_INET;
+  servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+  servaddr.sin_port        = htons(port);
 
-    if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 ) {
-	fprintf(stderr, "ECHOSERV: Error calling bind()\n");
-	exit(EXIT_FAILURE);
-    }
 
-    if ( listen(list_s, LISTENQ) < 0 ) {
-	fprintf(stderr, "ECHOSERV: Error calling listen()\n");
-	exit(EXIT_FAILURE);
-    }
+  /*  Bind our socket addresss to the 
+      listening socket, and call listen()  */
+
+  int on = 1;
+  setsockopt(list_s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+
+  if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 ) 
+  {
+    fprintf(stderr, "ECHOSERV: Error calling bind()\n");
+    exit(EXIT_FAILURE);
+  }
+
+  if ( listen(list_s, LISTENQ) < 0 ) 
+  {
+    fprintf(stderr, "ECHOSERV: Error calling listen()\n");
+    exit(EXIT_FAILURE);
+  }
 
     
-    /*  Enter an infinite loop to respond
-        to client requests and echo input  */
+  /*  Enter an infinite loop to respond
+      to client requests and echo input  */
 
-    char lolcat[1024];
-    while (1) {
+  char lolcat[1024];
+  while (1)
+  {
 
-	/*  Wait for a connection, then accept() it  */
+    /*  Wait for a connection, then accept() it  */
 
-	if ( (conn_s = accept(list_s, NULL, NULL) ) < 0 ) {
-	    fprintf(stderr, "ECHOSERV: Error calling accept()\n");
-	    exit(EXIT_FAILURE);
-	}
-        int amt = read(conn_s, lolcat, 1024);
+    if ( (conn_s = accept(list_s, NULL, NULL) ) < 0 )
+    {
+      fprintf(stderr, "ECHOSERV: Error calling accept()\n");
+      exit(EXIT_FAILURE);
+    }
+    int amt = read(conn_s, lolcat, 1024);
 
-	/*  Retrieve an input line from the connected socket
-	    then simply write it back to the same socket.     */
+    /*  Retrieve an input line from the connected socket
+        then simply write it back to the same socket.     */
 
-        if ( strcmp(lolcat, "antidisestablishmentarianism\r\n") == 0)
+    if ( strcmp(lolcat, "antidisestablishmentarianism\r\n") == 0)
           write(conn_s, "A political position that originated in 19th-century Britain in opposition to proposals for the disestablishment of the Church of England.", 1024);
-        if ( strcmp(lolcat, "hello\r\n") == 0)
+    if ( strcmp(lolcat, "hello\r\n") == 0)
           write(conn_s, "A common greeting in the English language.", 1024);
 
-	if ( close(conn_s) < 0 ) {
-	    fprintf(stderr, "ECHOSERV: Error calling close()\n");
-	    exit(EXIT_FAILURE);
-	}
+    if ( close(conn_s) < 0 )
+    {
+      fprintf(stderr, "ECHOSERV: Error calling close()\n");
+      exit(EXIT_FAILURE);
     }
+  }
 }

@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  if ( listen(list_s, LISTENQ) < 0 ) 
+  if ( listen(list_s, (1024)) < 0 ) 
   {
     fprintf(stderr, "ECHOSERV: Error calling listen()\n");
     exit(EXIT_FAILURE);

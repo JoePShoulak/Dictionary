@@ -91,10 +91,7 @@ int main(int argc, char *argv[]) {
     /*  Enter an infinite loop to respond
         to client requests and echo input  */
 
-    char lolcat[1024];
-    int amt = read(conn_s, lolcat, 1024);
-
-    while ( 1 ) {
+    while (1)
 
 	/*  Wait for a connection, then accept() it  */
 
@@ -102,6 +99,8 @@ int main(int argc, char *argv[]) {
 	    fprintf(stderr, "ECHOSERV: Error calling accept()\n");
 	    exit(EXIT_FAILURE);
 	}
+        char lolcat[1024];
+        int amt = read(conn_s, lolcat, 1024);
 
 
 	/*  Retrieve an input line from the connected socket

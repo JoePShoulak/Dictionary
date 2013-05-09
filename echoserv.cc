@@ -16,8 +16,6 @@
 #include <unistd.h>           /*  misc. UNIX functions      */
 #include <string.h>
 
-#include "helper.h"           /*  our own helper functions  */
-
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -101,7 +99,6 @@ int main(int argc, char *argv[]) {
 	    exit(EXIT_FAILURE);
 	}
         int amt = read(conn_s, lolcat, 1024);
-
 
 	/*  Retrieve an input line from the connected socket
 	    then simply write it back to the same socket.     */

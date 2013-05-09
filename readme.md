@@ -10,4 +10,11 @@ I plan on using the Oxford Dictionary.
 
 ## Usage ##
 
-So far, I haven't started on this project yet. I've started researching, however. As this becomes functional, I will include the functions.
+This will change as I get this program functioning...
+
+    $ make
+    $ ./echoserv 5000 &
+    $ telnet localhost 5000
+    $ hello
+      // an English greeting
+    

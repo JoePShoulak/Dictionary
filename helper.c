@@ -1,18 +1,3 @@
-/*
-
-  HELPER.C
-  ========
-  (c) Paul Griffiths, 1999
-  Email: mail@paulgriffiths.net
-
-  Implementation of sockets helper functions.
-
-  Many of these functions are adapted from, inspired by, or 
-  otherwise shamelessly plagiarised from "Unix Network 
-  Programming", W Richard Stevens (Prentice Hall).
-
-*/
-
 #include "helper.h"
 #include <sys/socket.h>
 #include <unistd.h>

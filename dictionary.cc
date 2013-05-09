@@ -1,24 +1,24 @@
 /*
 
-  ECHOSERV.CC
-  ==========
-  (c) Joe Shoulak, 2013
-  Email: joepshoulak2@gmail.com
-  
-  Server for dictionary.
+  dictionary.cc
+  Server for dictionary
 
 */
 
+/* Main TODOs */
+/* TODO: Get sockets to close after finished working   */
+/* TODO: Create a wrapper function for error handling, 
+         rough draft in helper.cc                      */
 
 #include <sys/socket.h>       /*  socket definitions        */
 #include <sys/types.h>        /*  socket types              */
 #include <arpa/inet.h>        /*  inet (3) funtions         */
-#include <unistd.h>           /*  misc. UNIX functions      */
-#include <string.h>
-#include "asciiart.cc"
+#include <unistd.h>           /*  misc. UNIX functions TODO: Find out what these are         */
+#include <string.h>           /*  strings TODO: Is this needed? Is strcmp dependant on this? */
+#include "asciiart.cc"        /*  Include my easter egg (Justine, no peeking ;) ) */
 
 #include <stdlib.h>           /*  exit functions            */
-#include <stdio.h>
+#include <stdio.h>            /*  fprintf, I assume TODO: Find out */
 
 /*  Global constants  */
 
@@ -30,14 +30,15 @@ int main(int argc, char *argv[]) {
   int       conn_s;                /*  connection socket         */
   short int port;                  /*  port number               */
   struct    sockaddr_in servaddr;  /*  socket address structure  */
-  char     *endptr;                /*  for strtol()              */
-    /*  Get port number from the command line, and
-        set to default port if no arguments were supplied  */
+  char     *endptr;                /*  for strtol() TODO: Find out what this is */
+
+  /*  Get port number from the command line, and
+      set to default port if no arguments were supplied  */
 
   if ( argc == 2 )
   {
-    port = strtol(argv[1], &endptr, 0);
-    if ( *endptr )
+    port = strtol(argv[1], &endptr, 0); /* TODO: What is happenning here? */
+    if ( *endptr )                      /* TODO: And here?                */
     {
       fprintf(stderr, "DICTIONARY: Invalid port number.\n");
       exit(EXIT_FAILURE);
@@ -105,10 +106,8 @@ int main(int argc, char *argv[]) {
       fprintf(stderr, "DICTIONARY: Error calling accept()\n");
       exit(EXIT_FAILURE);
     }
-    for (int i=0; i < 1024; ++i)          /* zero out the variable 'lolcat'             */
-    {                                     /* TODO: Can this be done with 'memset'?      */
-      lolcat[i] = 0;
-    }
+
+    memset(&lolcat, 0, sizeof(lolcat)); /* So THAT'S what memset is for... */
 
     int amt = read(conn_s, lolcat, 1024); /* write the data from the client to 'lolcat' */
 

@@ -7,10 +7,7 @@
 void Crash(char errorType[])
 {
   char errorMessage[128];
-  for (int i=0; i<128; ++i)
-  {
-    errorMessage[i] = 0;
-  }
+  memset(&errorMessage, 0, sizeof(errorMessage));
   errorMessage = "DICTIONARY: Fatal " + errorType + " error.\n";
   fprintf(stderr, errorMessage);
   exit(EXIT_FAILURE);

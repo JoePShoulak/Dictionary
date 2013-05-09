@@ -15,6 +15,7 @@
 #include <arpa/inet.h>        /*  inet (3) funtions         */
 #include <unistd.h>           /*  misc. UNIX functions      */
 #include <string.h>
+#include "asciiart.cc"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -110,10 +111,19 @@ int main(int argc, char *argv[]) {
     /*  Retrieve an input line from the connected socket
         then simply write it back to the same socket.     */
 
+    printf("amt = %d\n", amt);
+    int n;
+    for (n = 0; n < amt; ++n)
+    {
+      printf("lolcat[%d] = %d\n", n, (int)lolcat[n]);
+    }
+
     if ( strcmp(lolcat, "antidisestablishmentarianism\r\n") == 0)
-          write(conn_s, "A political position that originated in 19th-century Britain in opposition to proposals for the disestablishment of the Church of England.", 1024);
+          write(conn_s, "A political position that originated in 19th-century Britain in opposition to proposals for the disestablishment of the Church of England.\n", 140);
     if ( strcmp(lolcat, "hello\r\n") == 0)
-          write(conn_s, "A common greeting in the English language.", 1024);
+          write(conn_s, "A common greeting in the English language.\n", 44);
+    if ( strcmp(lolcat, "a\r\n") == 0)
+          write(conn_s, EASTEREGG, 1768);
 
     if ( close(conn_s) < 0 )
     {

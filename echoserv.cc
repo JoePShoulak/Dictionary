@@ -1,11 +1,11 @@
 /*
 
-  ECHOSERV.C
+  ECHOSERV.CC
   ==========
-  (c) Paul Griffiths, 1999
-  Email: mail@paulgriffiths.net
+  (c) Joe Shoulak, 2013
+  Email: joepshoulak2@gmail.com
   
-  Simple TCP/IP echo server.
+  Server for dictionary.
 
 */
 
@@ -20,8 +20,6 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-
-#include <string>
 
 /*  Global constants  */
 
@@ -76,6 +74,9 @@ int main(int argc, char *argv[]) {
     /*  Bind our socket addresss to the 
 	listening socket, and call listen()  */
 
+    int on = 1;
+    setsockopt(list_s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+
     if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 ) {
 	fprintf(stderr, "ECHOSERV: Error calling bind()\n");
 	exit(EXIT_FAILURE);
@@ -90,6 +91,9 @@ int main(int argc, char *argv[]) {
     /*  Enter an infinite loop to respond
         to client requests and echo input  */
 
+    char lolcat[1024];
+    int amt = read(conn_s, lolcat, 1024);
+
     while ( 1 ) {
 
 	/*  Wait for a connection, then accept() it  */
@@ -103,12 +107,10 @@ int main(int argc, char *argv[]) {
 	/*  Retrieve an input line from the connected socket
 	    then simply write it back to the same socket.     */
 
-        char lolcat[1024];
-        int amt = read(conn_s, lolcat, 1024);
-        std::string received_data(lolcat, amt);
-        char point = '!';
-        received_data += point;
-        write(conn_s, received_data, amt);
+        if ( strcmp(lolcat, "antidisestablishmentarianism\r\n") == 0)
+          write(conn_s, "A political position that originated in 19th-century Britain in opposition to proposals for the disestablishment of the Church of England.", 1024);
+        if ( strcmp(lolcat, "hello\r\n") == 0)
+          write(conn_s, "A common greeting in the English language.", 1024);
 
 	if ( close(conn_s) < 0 ) {
 	    fprintf(stderr, "ECHOSERV: Error calling close()\n");

@@ -1,5 +1,5 @@
 *.o
 *.swp
 .DS_STORE
-echoserv
+dictionary
 asciiart.cc

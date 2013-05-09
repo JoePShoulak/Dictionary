@@ -17,7 +17,7 @@
 #include <string.h>
 #include "asciiart.cc"
 
-#include <stdlib.h>
+#include <stdlib.h>           /*  exit functions            */
 #include <stdio.h>
 
 /*  Global constants  */
@@ -25,14 +25,13 @@
 #define ECHO_PORT          (2002)
 #define MAX_LINE           (1000)
 
-
 int main(int argc, char *argv[]) {
   int       list_s;                /*  listening socket          */
   int       conn_s;                /*  connection socket         */
   short int port;                  /*  port number               */
   struct    sockaddr_in servaddr;  /*  socket address structure  */
   char     *endptr;                /*  for strtol()              */
-    /*  Get port number from the command line, an
+    /*  Get port number from the command line, and
         set to default port if no arguments were supplied  */
 
   if ( argc == 2 )
@@ -40,7 +39,7 @@ int main(int argc, char *argv[]) {
     port = strtol(argv[1], &endptr, 0);
     if ( *endptr )
     {
-      fprintf(stderr, "ECHOSERV: Invalid port number.\n");
+      fprintf(stderr, "DICTIONARY: Invalid port number.\n");
       exit(EXIT_FAILURE);
     }
   }
@@ -50,7 +49,7 @@ int main(int argc, char *argv[]) {
   }
   else 
   {
-    fprintf(stderr, "ECHOSERV: Invalid arguments.\n");
+    fprintf(stderr, "DICTIONARY: Invalid arguments.\n");
     exit(EXIT_FAILURE);
   }
 
@@ -59,7 +58,7 @@ int main(int argc, char *argv[]) {
 
   if ( (list_s = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
   {
-    fprintf(stderr, "ECHOSERV: Error creating listening socket.\n");
+    fprintf(stderr, "DICTIONARY: Error creating listening socket.\n");
     exit(EXIT_FAILURE);
   }
 
@@ -81,13 +80,13 @@ int main(int argc, char *argv[]) {
 
   if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 ) 
   {
-    fprintf(stderr, "ECHOSERV: Error calling bind()\n");
+    fprintf(stderr, "DICTIONARY: Error calling bind()\n");
     exit(EXIT_FAILURE);
   }
 
   if ( listen(list_s, (1024)) < 0 ) 
   {
-    fprintf(stderr, "ECHOSERV: Error calling listen()\n");
+    fprintf(stderr, "DICTIONARY: Error calling listen()\n");
     exit(EXIT_FAILURE);
   }
 
@@ -103,30 +102,29 @@ int main(int argc, char *argv[]) {
 
     if ( (conn_s = accept(list_s, NULL, NULL) ) < 0 )
     {
-      fprintf(stderr, "ECHOSERV: Error calling accept()\n");
+      fprintf(stderr, "DICTIONARY: Error calling accept()\n");
       exit(EXIT_FAILURE);
     }
-    int amt = read(conn_s, lolcat, 1024);
-
-    /*  Retrieve an input line from the connected socket
-        then simply write it back to the same socket.     */
-
-    printf("amt = %d\n", amt);
-    int n;
-    for (n = 0; n < amt; ++n)
-    {
-      printf("lolcat[%d] = %d\n", n, (int)lolcat[n]);
+    for (int i=0; i < 1024; ++i)          /* zero out the variable 'lolcat'             */
+    {                                     /* TODO: Can this be done with 'memset'?      */
+      lolcat[i] = 0;
     }
+
+    int amt = read(conn_s, lolcat, 1024); /* write the data from the client to 'lolcat' */
+
+    /* TODO: move the following code to an external file,
+       maybe even one for each letter in the alphabet. 
+       Also, incorporate a dictionary library             */
 
     if ( strcmp(lolcat, "antidisestablishmentarianism\r\n") == 0)
     {
-          write(conn_s, "A political position that originated in 19th-century Britain in opposition to proposals for the disestablishment of the Church of England.\n", 140);
+      write(conn_s, "A political position that originated in 19th-century Britain in opposition to proposals for the disestablishment of the Church of England.\n", 140);
     }
     else if ( strcmp(lolcat, "hello\r\n") == 0)
     {
       write(conn_s, "A common formal greeting in the English language.\n", 51);
     }
-    else if ( strcmp(lolcat, "a\r\n") == 0)
+    else if ( strcmp(lolcat, "thanks\r\n") == 0)
     {
       write(conn_s, EASTEREGG, 1768);
     }
@@ -137,7 +135,7 @@ int main(int argc, char *argv[]) {
 
     if ( close(conn_s) < 0 )
     {
-      fprintf(stderr, "ECHOSERV: Error calling close()\n");
+      fprintf(stderr, "DICTIONARY: Error calling close()\n"); // This is what was in memory overwriting my null chars
       exit(EXIT_FAILURE);
     }
   }

@@ -1,6 +1,5 @@
 *.o
 *.swp
 .DS_STORE
-server
-client
+echoserv
 flower.txt

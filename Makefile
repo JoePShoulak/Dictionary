@@ -1,11 +1,11 @@
 echoserv: echoserv.o helper.o
-	gcc -o echoserv echoserv.o helper.o -Wall
+	g++ -o -std=c++11 echoserv echoserv.o helper.o -Wall
 
-echoserv.o: echoserv.c helper.h
-	gcc -o echoserv.o echoserv.c -c -ansi -Wall
+echoserv.o: echoserv.cc helper.h
+	g++ -o -std=c++11 echoserv.o echoserv.cc -c -Wall
 
 helper.o: helper.c helper.h
-	gcc -o helper.o helper.c -c -ansi -Wall
+	g++ -o -std=c++11 helper.o helper.c -c -Wall
 
 
 

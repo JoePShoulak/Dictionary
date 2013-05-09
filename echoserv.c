@@ -104,9 +104,10 @@ int main(int argc, char *argv[]) {
 
         char lolcat[1024];
         int amt = read(conn_s, lolcat, 1024);
+        std::string received_data(lolcat, amt);
         char point = '!';
-        lolcat += point;
-        write(conn_s, lolcat, amt);
+        received_data += point;
+        write(conn_s, received_data, amt);
 
 	if ( close(conn_s) < 0 ) {
 	    fprintf(stderr, "ECHOSERV: Error calling close()\n");

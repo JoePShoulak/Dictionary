@@ -119,11 +119,21 @@ int main(int argc, char *argv[]) {
     }
 
     if ( strcmp(lolcat, "antidisestablishmentarianism\r\n") == 0)
+    {
           write(conn_s, "A political position that originated in 19th-century Britain in opposition to proposals for the disestablishment of the Church of England.\n", 140);
-    if ( strcmp(lolcat, "hello\r\n") == 0)
-          write(conn_s, "A common greeting in the English language.\n", 44);
-    if ( strcmp(lolcat, "a\r\n") == 0)
-          write(conn_s, EASTEREGG, 1768);
+    }
+    else if ( strcmp(lolcat, "hello\r\n") == 0)
+    {
+      write(conn_s, "A common formal greeting in the English language.\n", 51);
+    }
+    else if ( strcmp(lolcat, "a\r\n") == 0)
+    {
+      write(conn_s, EASTEREGG, 1768);
+    }
+    else
+    {
+      write(conn_s, "That word is not in this dictionary yet.\n", 43);
+    }
 
     if ( close(conn_s) < 0 )
     {

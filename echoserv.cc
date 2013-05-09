@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
         to client requests and echo input  */
 
     char lolcat[1024];
-    while (1)
+    while (1) {
 
 	/*  Wait for a connection, then accept() it  */
 

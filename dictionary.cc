@@ -14,10 +14,9 @@
 #include <sys/types.h>        /* socket types           */
 #include <arpa/inet.h>        /* inet (3) funtions      */
 #include <unistd.h>           /* misc. UNIX functions   */ // TODO: Find out what these are
-#include <string.h>           /* strings                */ // TODO: Is this needed? Is strcmp dependant on this?
-#include "asciiart.cc"        /* Include my easter egg  */ // (Justine, no peeking ;) )
+#include <string.h>           /* strings                */
 #include <stdlib.h>           /* exit functions         */
-#include <stdio.h>            /* fprintf, I assume      */ // TODO: Find out
+#include <stdio.h>            /* fprintf                */
 
 #define DEFAULT_PORT          (2002)
 
@@ -26,15 +25,15 @@ int main(int argc, char *argv[]) {
   int       conn_s;                /* connection socket         */
   short int port;                  /* port number               */
   struct    sockaddr_in servaddr;  /* socket address structure  */
-  char     *endptr;                /* for strtol()              */ // TODO: Find out what this is
+  char     *endptr;                /* for strtol()              */
 
   /* Get port number from the command line, and
      set to default port if no arguments were supplied */
 
   if ( argc == 2 )
   {
-    port = strtol(argv[1], &endptr, 0); /* TODO: What is happenning here? */
-    if ( *endptr )                      /* TODO: And here?                */
+    port = strtol(argv[1], &endptr, 0);
+    if ( *endptr )
     {
       fprintf(stderr, "DICTIONARY: Invalid port number.\n");
       exit(EXIT_FAILURE);
@@ -118,10 +117,6 @@ int main(int argc, char *argv[]) {
     else if ( strcmp(lolcat, "hello\r\n") == 0)
     {
       write(conn_s, "A common formal greeting in the English language.\n", 51);
-    }
-    else if ( strcmp(lolcat, "thanks\r\n") == 0)
-    {
-      write(conn_s, EASTEREGG, 1768);
     }
     else
     {

@@ -10,30 +10,26 @@
 /* TODO: Create a wrapper function for error handling, 
          rough draft in helper.cc                      */
 
-#include <sys/socket.h>       /*  socket definitions        */
-#include <sys/types.h>        /*  socket types              */
-#include <arpa/inet.h>        /*  inet (3) funtions         */
-#include <unistd.h>           /*  misc. UNIX functions TODO: Find out what these are         */
-#include <string.h>           /*  strings TODO: Is this needed? Is strcmp dependant on this? */
-#include "asciiart.cc"        /*  Include my easter egg (Justine, no peeking ;) ) */
+#include <sys/socket.h>       /* socket definitions     */
+#include <sys/types.h>        /* socket types           */
+#include <arpa/inet.h>        /* inet (3) funtions      */
+#include <unistd.h>           /* misc. UNIX functions   */ // TODO: Find out what these are
+#include <string.h>           /* strings                */ // TODO: Is this needed? Is strcmp dependant on this?
+#include "asciiart.cc"        /* Include my easter egg  */ // (Justine, no peeking ;) )
+#include <stdlib.h>           /* exit functions         */
+#include <stdio.h>            /* fprintf, I assume      */ // TODO: Find out
 
-#include <stdlib.h>           /*  exit functions            */
-#include <stdio.h>            /*  fprintf, I assume TODO: Find out */
-
-/*  Global constants  */
-
-#define ECHO_PORT          (2002)
-#define MAX_LINE           (1000)
+#define DEFAULT_PORT          (2002)
 
 int main(int argc, char *argv[]) {
-  int       list_s;                /*  listening socket          */
-  int       conn_s;                /*  connection socket         */
-  short int port;                  /*  port number               */
-  struct    sockaddr_in servaddr;  /*  socket address structure  */
-  char     *endptr;                /*  for strtol() TODO: Find out what this is */
+  int       list_s;                /* listening socket          */
+  int       conn_s;                /* connection socket         */
+  short int port;                  /* port number               */
+  struct    sockaddr_in servaddr;  /* socket address structure  */
+  char     *endptr;                /* for strtol()              */ // TODO: Find out what this is
 
-  /*  Get port number from the command line, and
-      set to default port if no arguments were supplied  */
+  /* Get port number from the command line, and
+     set to default port if no arguments were supplied */
 
   if ( argc == 2 )
   {
@@ -46,16 +42,16 @@ int main(int argc, char *argv[]) {
   }
   else if ( argc < 2 )
   {
-    port = ECHO_PORT;
+    port = DEFAULT_PORT;
   }
-  else 
+  else
   {
     fprintf(stderr, "DICTIONARY: Invalid arguments.\n");
     exit(EXIT_FAILURE);
   }
 
 	
-  /*  Create the listening socket  */
+  /* Create the listening socket */
 
   if ( (list_s = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
   {
@@ -64,8 +60,8 @@ int main(int argc, char *argv[]) {
   }
 
 
-  /*  Set all bytes in socket address structure to
-      zero, and fill in the relevant data members   */
+  /* Set all bytes in socket address structure to
+     zero, and fill in the relevant data members */
 
   memset(&servaddr, 0, sizeof(servaddr));
   servaddr.sin_family      = AF_INET;
@@ -73,33 +69,33 @@ int main(int argc, char *argv[]) {
   servaddr.sin_port        = htons(port);
 
 
-  /*  Bind our socket addresss to the 
-      listening socket, and call listen()  */
+  /* Bind our socket addresss to the
+     listening socket, and call listen() */
 
   int on = 1;
   setsockopt(list_s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
-  if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 ) 
+  if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 )
   {
     fprintf(stderr, "DICTIONARY: Error calling bind()\n");
     exit(EXIT_FAILURE);
   }
 
-  if ( listen(list_s, (1024)) < 0 ) 
+  if ( listen(list_s, (1024)) < 0 )
   {
     fprintf(stderr, "DICTIONARY: Error calling listen()\n");
     exit(EXIT_FAILURE);
   }
 
     
-  /*  Enter an infinite loop to respond
-      to client requests and echo input  */
+  /* Enter an infinite loop to respond
+     to client requests and echo input */
 
   char lolcat[1024];
   while (1)
   {
 
-    /*  Wait for a connection, then accept() it  */
+    /* Wait for a connection, then accept() it */
 
     if ( (conn_s = accept(list_s, NULL, NULL) ) < 0 )
     {
@@ -107,12 +103,12 @@ int main(int argc, char *argv[]) {
       exit(EXIT_FAILURE);
     }
 
-    memset(&lolcat, 0, sizeof(lolcat)); /* So THAT'S what memset is for... */
+    memset(&lolcat, 0, sizeof(lolcat));   /* So THAT'S what memset is for...            */
 
     int amt = read(conn_s, lolcat, 1024); /* write the data from the client to 'lolcat' */
 
     /* TODO: move the following code to an external file,
-       maybe even one for each letter in the alphabet. 
+       maybe even one for each letter in the alphabet.
        Also, incorporate a dictionary library             */
 
     if ( strcmp(lolcat, "antidisestablishmentarianism\r\n") == 0)

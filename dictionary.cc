@@ -6,7 +6,6 @@
 */
 
 /* Main TODOs */
-/* TODO: Get sockets to close after finished working   */
 /* TODO: Create a wrapper function for error handling, 
          rough draft in helper.cc                      */
 
@@ -16,9 +15,11 @@
 #include <unistd.h>           /* misc. UNIX functions   */ // TODO: Find out what these are
 #include <string.h>           /* strings                */
 #include <stdlib.h>           /* exit functions         */
-#include <stdio.h>            /* fprintf                */
+#include <stdio.h>            /* fprintf                */ // TODO: Find out if I need fprintf, and if so, why
 
-#define DEFAULT_PORT          (2002)
+#include "helper.h"
+
+#define DEFAULT_PORT          (1123)
 
 int main(int argc, char *argv[]) {
   int       list_s;                /* listening socket          */
@@ -34,7 +35,10 @@ int main(int argc, char *argv[]) {
   {
     port = strtol(argv[1], &endptr, 0);
     if ( *endptr )
+  
     {
+      char errorType[] = "argument";
+      Crash(errorType);
       fprintf(stderr, "DICTIONARY: Invalid port number.\n");
       exit(EXIT_FAILURE);
     }

@@ -1,21 +1,21 @@
-/*
-
-  dictionary.cc
-  Server for dictionary
-
-*/
-
 /* Main TODOs */
 /* TODO: Create a wrapper function for error handling, 
          rough draft in helper.cc                      */
 
-#include <sys/socket.h>       /* socket definitions     */
-#include <sys/types.h>        /* socket types           */
-#include <arpa/inet.h>        /* inet (3) funtions      */
-#include <unistd.h>           /* misc. UNIX functions   */ // TODO: Find out what these are
-#include <string.h>           /* strings                */
-#include <stdlib.h>           /* exit functions         */
-#include <stdio.h>            /* fprintf                */ // TODO: Find out if I need fprintf, and if so, why
+#include <sys/socket.h> /* socket definitions */
+#include <sys/types.h>  /* socket types       */
+#include <arpa/inet.h>  /* inet (3) funtions  */
+#include <unistd.h>     /* UNIX functions     */ // TODO: Find out what these are
+#include <string.h>     /* strings            */
+#include <stdlib.h>     /* exit functions     */
+#include <stdio.h>      /* fprintf            */ // TODO: Find out iostream vs stdio
+
+#ifndef HELPER_H
+#define HELPER_H
+
+void Crash(char errorType[]);
+
+#endif
 
 #include "helper.h"
 
@@ -37,10 +37,8 @@ int main(int argc, char *argv[]) {
     if ( *endptr )
   
     {
-      char errorType[] = "argument";
+      char errorType[] = "port number";
       Crash(errorType);
-      fprintf(stderr, "DICTIONARY: Invalid port number.\n");
-      exit(EXIT_FAILURE);
     }
   }
   else if ( argc < 2 )
@@ -89,7 +87,6 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "DICTIONARY: Error calling listen()\n");
     exit(EXIT_FAILURE);
   }
-
     
   /* Enter an infinite loop to respond
      to client requests and echo input */

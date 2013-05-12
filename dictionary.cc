@@ -34,11 +34,9 @@ int main(int argc, char *argv[]) {
   if ( argc == 2 )
   {
     port = strtol(argv[1], &endptr, 0);
-    if ( *endptr )
-  
+    if ( *endptr ) 
     {
-      char errorType[] = "port number";
-      Crash(errorType);
+      Crash("port number");
     }
   }
   else if ( argc < 2 )
@@ -47,19 +45,15 @@ int main(int argc, char *argv[]) {
   }
   else
   {
-    fprintf(stderr, "DICTIONARY: Invalid arguments.\n");
-    exit(EXIT_FAILURE);
+    Crash("argument");
   }
-
 	
   /* Create the listening socket */
 
   if ( (list_s = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
   {
-    fprintf(stderr, "DICTIONARY: Error creating listening socket.\n");
-    exit(EXIT_FAILURE);
+    Crash("listening socket");
   }
-
 
   /* Set all bytes in socket address structure to
      zero, and fill in the relevant data members */
@@ -69,7 +63,6 @@ int main(int argc, char *argv[]) {
   servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
   servaddr.sin_port        = htons(port);
 
-
   /* Bind our socket addresss to the
      listening socket, and call listen() */
 
@@ -78,14 +71,12 @@ int main(int argc, char *argv[]) {
 
   if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 )
   {
-    fprintf(stderr, "DICTIONARY: Error calling bind()\n");
-    exit(EXIT_FAILURE);
+    Crash("socket bind");
   }
 
   if ( listen(list_s, (1024)) < 0 )
   {
-    fprintf(stderr, "DICTIONARY: Error calling listen()\n");
-    exit(EXIT_FAILURE);
+    Crash("socket listen");
   }
     
   /* Enter an infinite loop to respond
@@ -99,8 +90,7 @@ int main(int argc, char *argv[]) {
 
     if ( (conn_s = accept(list_s, NULL, NULL) ) < 0 )
     {
-      fprintf(stderr, "DICTIONARY: Error calling accept()\n");
-      exit(EXIT_FAILURE);
+      Crash("socket accept");
     }
 
     memset(&lolcat, 0, sizeof(lolcat));   /* So THAT'S what memset is for...            */
@@ -126,8 +116,7 @@ int main(int argc, char *argv[]) {
 
     if ( close(conn_s) < 0 )
     {
-      fprintf(stderr, "DICTIONARY: Error calling close()\n"); // This is what was in memory overwriting my null chars
-      exit(EXIT_FAILURE);
+      Crash("socket close");
     }
   }
 }

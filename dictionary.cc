@@ -7,7 +7,8 @@
 #include <stdio.h>      /* fprintf            */ // TODO: Find out iostream vs stdio
 #include <iostream>
 #include <fstream>
-
+#include <sstream>
+ 
 #ifndef HELPER_H
 #define HELPER_H
 
@@ -20,7 +21,6 @@ void Crash(char errorType[]);
 using std::string;
 using std::ifstream;
 using namespace std;
-
 
 #define DEFAULT_PORT          (1123)
 
@@ -103,15 +103,31 @@ int main(int argc, char *argv[]) {
     /* TODO: move the following code to an external file,
        maybe even one for each letter in the alphabet.
        Also, incorporate a dictionary library             */
-
+    string input(lolcat);
+    input = input.substr(0, (input.length()-2));
     string line;
     ifstream myfile ("definitions.txt");
     if (myfile.is_open())
     {
+      int it = 0;
       while ( myfile.good() )
       {
-        getline (myfile,line);
-        cout << line << endl;
+        it++;
+        getline(myfile,line);
+        unsigned pos = line.find("!@#$");
+        string word(line.substr(0,pos));
+        if (input.compare(word) == 0)
+        {
+          string rest = line.substr(pos+4);
+          int new_pos = rest.find("!@#$");
+          string wordType(rest.substr(0,new_pos));
+          string wordDef(rest.substr(new_pos+4));
+          write(conn_s, "  ", 2);
+          write(conn_s, ("%s", wordType.data()), wordType.length());
+          write(conn_s, ": ", 2);
+          write(conn_s, ("%s", wordDef.data()), wordDef.length());
+          write(conn_s, "\n", 1);
+        }
       }
       myfile.close();
     }

@@ -10,10 +10,14 @@ I plan on using the Oxford Dictionary.
 
 ## Usage ##
 
-    $ telnet xxx.xxx.xxx.xxx 5000
-    $ hello
-      // an English greeting
-    
-------
+    $ telnet xxx.xxx.xxx.xxx yyyy
+    Trying xxx.xxx.xxx.xxx...
+    Connected to <servername>
+    Escape character is '^]'.
+    // Enter any word!
+    computer
+      noun: a machine for performing calculations automatically
+    Connection closed by foreign host.
+---
 
 1. Server not currently online

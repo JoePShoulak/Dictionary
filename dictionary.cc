@@ -99,10 +99,10 @@ int main(int argc, char *argv[]) {
     memset(&lolcat, 0, sizeof(lolcat));   /* So THAT'S what memset is for...            */
 
     int amt = read(conn_s, lolcat, 1024); /* write the data from the client to 'lolcat' */
+    
+    /* TODO: Turn the following code into a Lookup
+             function, and move to an external file. */
 
-    /* TODO: move the following code to an external file,
-       maybe even one for each letter in the alphabet.
-       Also, incorporate a dictionary library             */
     string input(lolcat);
     input = input.substr(0, (input.length()-2));
     string line;

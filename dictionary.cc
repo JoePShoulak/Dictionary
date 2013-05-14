@@ -1,7 +1,3 @@
-/* Main TODOs */
-/* TODO: Create a wrapper function for error handling, 
-         rough draft in helper.cc                      */
-
 #include <sys/socket.h> /* socket definitions */
 #include <sys/types.h>  /* socket types       */
 #include <arpa/inet.h>  /* inet (3) funtions  */
@@ -9,6 +5,8 @@
 #include <string.h>     /* strings            */
 #include <stdlib.h>     /* exit functions     */
 #include <stdio.h>      /* fprintf            */ // TODO: Find out iostream vs stdio
+#include <iostream>
+#include <fstream>
 
 #ifndef HELPER_H
 #define HELPER_H
@@ -101,18 +99,18 @@ int main(int argc, char *argv[]) {
        maybe even one for each letter in the alphabet.
        Also, incorporate a dictionary library             */
 
-    if ( strcmp(lolcat, "antidisestablishmentarianism\r\n") == 0)
+    string line;
+    ifstream myfile ("definitions.txt");
+    if (myfile.is_open())
     {
-      write(conn_s, "A political position that originated in 19th-century Britain in opposition to proposals for the disestablishment of the Church of England.\n", 140);
+      while ( myfile.good() )
+      {
+        getline (myfile,line);
+        cout << line << endl;
+      }
+      myfile.close();
     }
-    else if ( strcmp(lolcat, "hello\r\n") == 0)
-    {
-      write(conn_s, "A common formal greeting in the English language.\n", 51);
-    }
-    else
-    {
-      write(conn_s, "That word is not in this dictionary yet.\n", 43);
-    }
+    else Crash("dictionary");
 
     if ( close(conn_s) < 0 )
     {

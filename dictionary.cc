@@ -102,36 +102,8 @@ int main(int argc, char *argv[]) {
     
     /* TODO: Turn the following code into a Lookup
              function, and move to an external file. */
-
-    string input(lolcat);
-    input = input.substr(0, (input.length()-2));
-    string line;
-    ifstream myfile ("definitions.txt");
-    if (myfile.is_open())
-    {
-      int it = 0;
-      while ( myfile.good() )
-      {
-        it++;
-        getline(myfile,line);
-        unsigned pos = line.find("!@#$");
-        string word(line.substr(0,pos));
-        if (input.compare(word) == 0)
-        {
-          string rest = line.substr(pos+4);
-          int new_pos = rest.find("!@#$");
-          string wordType(rest.substr(0,new_pos));
-          string wordDef(rest.substr(new_pos+4));
-          write(conn_s, "  ", 2);
-          write(conn_s, ("%s", wordType.data()), wordType.length());
-          write(conn_s, ": ", 2);
-          write(conn_s, ("%s", wordDef.data()), wordDef.length());
-          write(conn_s, "\n", 1);
-        }
-      }
-      myfile.close();
-    }
-    else Crash("dictionary");
+    
+    Define(lolcat, conn_s);
 
     if ( close(conn_s) < 0 )
     {

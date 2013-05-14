@@ -17,6 +17,11 @@ void Crash(char errorType[]);
 
 #include "helper.h"
 
+using std::string;
+using std::ifstream;
+using namespace std;
+
+
 #define DEFAULT_PORT          (1123)
 
 int main(int argc, char *argv[]) {

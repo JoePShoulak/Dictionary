@@ -6,7 +6,7 @@
 
 void Crash(char errorType[])
 {
-  char errorMessage[];
+  char errorMessage[80];
   strcpy(errorMessage, "DICTIONARY: Fatal ");
   strcat(errorMessage, errorType);
   strcat(errorMessage, " error.\n");

@@ -13,6 +13,7 @@
 #define HELPER_H
 
 void Crash(char errorType[]);
+void Define(char toDefine[], int sock);
 
 #endif
 
@@ -39,7 +40,8 @@ int main(int argc, char *argv[]) {
     port = strtol(argv[1], &endptr, 0);
     if ( *endptr ) 
     {
-      Crash("port number");
+      char error[] = "port number";
+      Crash(error);
     }
   }
   else if ( argc < 2 )
@@ -48,14 +50,16 @@ int main(int argc, char *argv[]) {
   }
   else
   {
-    Crash("argument");
+    char error[] = "argument";
+    Crash(error);
   }
 	
   /* Create the listening socket */
 
   if ( (list_s = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
   {
-    Crash("listening socket");
+    char error[] = "listening socket";
+    Crash(error);
   }
 
   /* Set all bytes in socket address structure to
@@ -74,12 +78,14 @@ int main(int argc, char *argv[]) {
 
   if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 )
   {
-    Crash("socket bind");
+    char error[] = "socket bind";
+    Crash(error);
   }
 
   if ( listen(list_s, (1024)) < 0 )
   {
-    Crash("socket listen");
+    char error[] = "socket listen";
+    Crash(error);
   }
     
   /* Enter an infinite loop to respond
@@ -93,7 +99,8 @@ int main(int argc, char *argv[]) {
 
     if ( (conn_s = accept(list_s, NULL, NULL) ) < 0 )
     {
-      Crash("socket accept");
+      char error[] = "socket accept";
+      Crash(error);
     }
 
     memset(&lolcat, 0, sizeof(lolcat));   /* So THAT'S what memset is for...            */
@@ -107,7 +114,8 @@ int main(int argc, char *argv[]) {
 
     if ( close(conn_s) < 0 )
     {
-      Crash("socket close");
+      char error[] = "socket close";
+      Crash(error);
     }
   }
 }

@@ -16,7 +16,7 @@ void Crash(char errorType[])
   strcpy(errorMessage, "DICTIONARY: Fatal ");
   strcat(errorMessage, errorType);
   strcat(errorMessage, " error.\n");
-  fprintf(stderr, errorMessage);
+  fprintf(stderr, "%s", errorMessage);
   exit(EXIT_FAILURE);
 }
 
@@ -51,7 +51,10 @@ void Define(char toDefine[], int sock)
       }
       myfile.close();
     }
-    else Crash("dictionary");
-
+    else
+    {
+      char error[] = "dictionary";
+      Crash(error);
+    }
 }
 

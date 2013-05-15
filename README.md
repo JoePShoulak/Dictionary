@@ -6,7 +6,7 @@ This is a dictionary server I am making to learn under the tutelage of [JART](ht
 
 ## Details ##
 
-`definitions.txt` was provided by [JART](http://www.github.com/JART). It contains 17,000+ words. The search algortihm currently operates at O(n). That is the next thing to be fixed.
+`definitions.txt` was provided by [JART](http://www.github.com/JART). It contains 117,659 English words. The search algortihm currently operates at O(n). That is the next thing to be fixed.
 
 ## Usage ##
 

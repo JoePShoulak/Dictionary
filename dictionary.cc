@@ -1,19 +1,17 @@
-#include <sys/socket.h> /* socket definitions */
-#include <sys/types.h>  /* socket types       */
-#include <arpa/inet.h>  /* inet (3) funtions  */
-#include <unistd.h>     /* UNIX functions     */ // TODO: Find out what these are
-#include <string.h>     /* strings            */
-#include <stdlib.h>     /* exit functions     */
-#include <stdio.h>      /* fprintf            */ // TODO: Find out iostream vs stdio
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#include <sys/socket.h> /* socket defs    */
+#include <sys/types.h>  /* socket types   */
+#include <arpa/inet.h>  /* inet funtions  */
+#include <unistd.h>     /* UNIX functions */
+#include <string.h>     /* strings        */
+#include <stdlib.h>     /* exit functions */
+#include <stdio.h>      /* fprintf        */
+#include <iostream>     /* file reading   */
  
 #ifndef HELPER_H
-#define HELPER_H
+  #define HELPER_H
 
-void Crash(char errorType[]);
-void Define(char toDefine[], int sock);
+  void Crash(char errorType[]);
+  void Define(char toDefine[], int sock);
 
 #endif
 
@@ -26,11 +24,11 @@ using namespace std;
 #define DEFAULT_PORT          (1123)
 
 int main(int argc, char *argv[]) {
-  int       list_s;                /* listening socket          */
-  int       conn_s;                /* connection socket         */
-  short int port;                  /* port number               */
-  struct    sockaddr_in servaddr;  /* socket address structure  */
-  char     *endptr;                /* for strtol()              */
+  int       list_s;                /* listening socket      */
+  int       conn_s;                /* connection socket     */
+  short int port;                  /* port number           */
+  struct    sockaddr_in servaddr;  /* socket add structure  */
+  char     *endptr;                /* for strtol()          */
 
   /* Get port number from the command line, and
      set to default port if no arguments were supplied */

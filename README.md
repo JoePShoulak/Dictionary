@@ -2,11 +2,11 @@
 
 ## Overview ##
 
-This is a dictionary server I am making to learn under the tutelage of JART. Just telnet the server<sup>1</sup>, and learn! From your terminal, even!
+This is a dictionary server I am making to learn under the tutelage of [JART](http://www.github.com/JART). Just telnet the server<sup>1</sup>, and learn! From your terminal, even!
 
 ## Details ##
 
-I plan on using the Oxford Dictionary.
+`definitions.txt` was provided by [JART](http://www.github.com/JART). It contains 17,000+ words. The search algortihm currently operates at O(n). That is the next thing to be fixed.
 
 ## Usage ##
 

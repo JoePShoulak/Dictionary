@@ -3,15 +3,15 @@
 #include <stdlib.h>  /* for good measure     */
 #include <iostream>  /* for file reading     */
 #include <fstream>   /* TODO: Find out       */
-#include <sstream>   /* TODO: Find out       */
+#include <sstream>   /* int converter        */
 
 using std::ifstream;
-using std::string;
-using std::cout;
+using std::stringstream;
+using namespace std;
 
 string Itos(int toS)
 {
-  std::stringstream ss;
+  stringstream ss;
   ss << toS;
   string number( ss.str() );
   return number;
@@ -25,49 +25,39 @@ string Strip(string word, int amount)
 int Send(int socket, string word)
 {
   return write(socket, ( "%s", word.data() ), word.length() );
-}
 
 
-string Error(int errorNum, int send=1, int crash=1)
+string ErrorLookup(int errorNum)
 {
-  string errorType;
   switch(errorNum)
   {
     case 10:
-      errorType = "Port number";
-      break;
+      return "Port number";
     case 11:
-      errorType = "Listening socket";
-      break;
+      return "Listening socket";
     case 12:
-      errorType = "Socket bind";
-      break;
+      return "Socket bind";
     case 13:
-      errorType = "Socket listen";
-      break;
+      return "Socket listen";
     case 14:
-      errorType = "Socket accept";
-      break;
+      return "Socket accept";
     case 15:
-      errorType = "Socket close";
-      break;
+      return "Socket close";
     case 20:
-      errorType = "Argument";
-      break;
+      return "Argument";
     case 21:
-      errorType = "Dictionary read";
-      break;
+      return "Dictionary read";
     case 30:
-      errorType = "No definition";
-      break;
+      return "No definition";
     default:
-      errorType = "Unknown";
-      break;
+      return "Unknown";
   }
+}
+
+string Error(int errorNum, int send=1, int crash=1)
+{
+  string errorType = ErrorLookup(errorNum);
   string message = "";
-  // std::stringstream ss;
-  // ss << errorNum;
-  // string number(ss.str());
   message += errorType;
   message += " error";
   if (crash)
@@ -123,7 +113,6 @@ void Define(char toDefine[], int sock)
     if (count == 0) // If no matches have been found...
     { 
       Send(sock, Error(30, 0, 0) );
-      // write(sock, "Word not yet in dictionary.\n", 29);
     }
     myfile.close();
   }

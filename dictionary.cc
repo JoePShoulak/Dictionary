@@ -8,8 +8,7 @@
 #include <iostream>     /* file reading   */
  
 #ifndef HELPER_H
-  #define HELPER_H
-
+#define HELPER_H
 
   void Define(char toDefine[], int sock);
 
@@ -24,14 +23,14 @@ using namespace std;
 #define DEFAULT_PORT          (1123)
 
 int main(int argc, char *argv[]) {
-  int       list_s;                /* listening socket      */
-  int       conn_s;                /* connection socket     */
-  short int port;                  /* port number           */
-  struct    sockaddr_in servaddr;  /* socket add structure  */
-  char     *endptr;                /* for strtol()          */
+  int       list_s;                /* listening socket     */
+  int       conn_s;                /* connection socket    */
+  short int port;                  /* port number          */
+  struct    sockaddr_in servaddr;  /* socket add structure */
+  char     *endptr;                /* for strtol()         */
 
-  /* Get port number from the command line, and
-     set to default port if no arguments were supplied */
+  /* Get port number from the command line, and set
+      to default port if no arguments were supplied */
 
   if ( argc == 2 )
   {

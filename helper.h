@@ -20,36 +20,51 @@ int Send(int socket, string word)
 }
 
 
-void Error(int errorNum, int crash=0)
+string Error(int errorNum, int send=1, int crash=1)
 {
   string errorType;
   if (errorNum == 10)                 // Normally I'd use braces,
-    errorType = "port number";        // but here, it just clutters
+    errorType = "Port number";        // but here, it just clutters
   else if (errorNum == 11)            // the code. I'll try to get
-    errorType = "listening socket";   // a switch statement working  
+    errorType = "Listening socket";   // a switch statement working  
   else if (errorNum == 12)            // since this is a perfect
-    errorType = "socket bind";        // example of a use for it.
+    errorType = "Socket bind";        // example of a use for it.
   else if (errorNum == 13)
-    errorType = "socket listen";
+    errorType = "Socket listen";
   else if (errorNum == 14)
-    errorType = "socket accept";
+    errorType = "Socket accept";
   else if (errorNum == 15)
-    errorType = "socket close";
+    errorType = "Socket close";
   else if (errorNum == 20)
-    errorType = "argument";
+    errorType = "Argument";
   else if (errorNum == 21)
-    errorType = "dictionary read";
+    errorType = "Dictionary read";
+  else if (errorNum == 30)
+    errorType = "No definition";
   else
-    errorType = "unknown";
+    errorType = "Unknown";
+  string message = "";
+  std::stringstream ss;
+  ss << errorNum;
+  string number(ss.str());
+  message += errorType;
+  message += " error";
   if (crash)
   {
-  cout << "Fatal ";
+    message += " (fatal)";
   }
-  cout  << errorType << " error. (code " << errorNum << ")\n";  
+  message += ". (code ";
+  message += string( ss.str() );
+  message += ")\n";
+  if (send)
+  {
+    cout << message;
+  }
   if (crash)
   {
     exit(EXIT_FAILURE);
   }
+  return message;
 }
 
 void Define(char toDefine[], int sock)
@@ -85,8 +100,9 @@ void Define(char toDefine[], int sock)
       }
     }
     if (count == 0) // If no matches have been found...
-    {
-      write(sock, "Word not yet in dictionary.\n", 29);
+    { 
+      Send(sock, Error(30, 0, 0) );
+      // write(sock, "Word not yet in dictionary.\n", 29);
     }
     myfile.close();
   }

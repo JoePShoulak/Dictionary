@@ -2,6 +2,7 @@
 #include <stdio.h>   /* for I/O           */
 #include <stdlib.h>  /* for good measure  */
 #include <iostream>  /* for file reading  */
+#include <fstream>   /* also for files    */
 #include <sstream>   /* i to s converion  */
 
 using std::ifstream; // file I/O
@@ -14,6 +15,14 @@ string Itos(int toS) // converts an int to a c++ string
   ss << toS;
   string number( ss.str() );
   return number;
+}
+
+string Bold(string toBold)
+{
+  string bolded = "\x1b[1m";
+  bolded += toBold;
+  bolded += "\x1b[0m";
+  return bolded;
 }
 
 string Strip(string word, int amount)  // remove the last x characters
@@ -101,11 +110,7 @@ void Define(char toDefine[], int sock)  // go get the definition
         string word = "  " + input + " ";       // word
         string theRest = "("  + wordType + "): ";  // word type
         theRest += wordDef + "\n";                 // word definition
-        string bold("\x1b[1m");  // bold via VT100 escape sequences
-        string unbold("\x1b[0m");  // standard text via same above
-        Send(sock, bold);  // bold it
-        Send(sock, word);  // send the word
-        Send(sock, unbold);  // unbold
+        Send(sock, Bold( word) );  // send the word
         Send(sock, theRest);  // send the rest
       }
     }
@@ -120,4 +125,3 @@ void Define(char toDefine[], int sock)  // go get the definition
     Error(21, 1); // dictionary
   }
 }
-

@@ -1,9 +1,9 @@
-#include <string>    /* for strings       */
-#include <stdio.h>   /* for I/O           */
-#include <stdlib.h>  /* for good measure  */
-#include <iostream>  /* for file reading  */
-#include <fstream>   /* also for files    */
-#include <sstream>   /* i to s converion  */
+#include <string>    /*  for strings       */
+#include <stdio.h>   /*  for I/O           */
+#include <stdlib.h>  /*  for good measure  */
+#include <iostream>  /*  for file reading  */
+#include <fstream>   /*  also for files    */
+#include <sstream>   /*  i to s converion  */
 
 #define CRASH exit(EXIT_FAILURE)
 
@@ -11,7 +11,7 @@ using std::ifstream; // file I/O
 using std::stringstream; // i to s conversions
 using namespace std; // strings and whatnot
 
-string Itos(int toS) // converts an int to a c++ string
+string IntToString(int toS) // converts an int to a c++ string
 {
   stringstream ss;
   ss << toS;
@@ -21,10 +21,9 @@ string Itos(int toS) // converts an int to a c++ string
 
 string Bold(string toBold)
 {
-  string bolded = "\x1b[1m";
-  bolded += toBold;
-  bolded += "\x1b[0m";
-  return bolded;
+  ostringstream bolded;
+  bolded << "\x1b[1m" << toBold << "\x1b[0m";
+  return bolded.str();
 }
 
 string Strip(string word, int amount)  // remove the last x characters
@@ -73,7 +72,7 @@ string Error(int errorNum, int send=1, int fatal=1)  // reports error
   {
     message << " (fatal)";
   }
-  message << ". (code " << string( Itos(errorNum) ) << ")\n";
+  message << ". (code " << string( IntToString(errorNum) ) << ")\n";
   if (send)
   {
     cout << message.str();

@@ -1,16 +1,13 @@
-#include <sys/socket.h> /* socket defs    */
-#include <sys/types.h>  /* socket types   */
-#include <arpa/inet.h>  /* inet funtions  */
-#include <unistd.h>     /* UNIX functions */
-#include <string.h>     /* strings        */
-#include <stdlib.h>     /* exit functions */
-#include <stdio.h>      /* fprintf        */
-#include <iostream>     /* file reading   */
+#include <sys/socket.h>  /*  socket defs     */
+#include <sys/types.h>   /*  socket types    */
+#include <arpa/inet.h>   /*  inet funtions   */
+#include <unistd.h>      /*  UNIX functions  */
+#include <string.h>      /*  strings         */
  
 #ifndef HELPER_H
 #define HELPER_H
 
-  void Define(char toDefine[], int sock);
+void Define(char toDefine[], int sock);
 
 #endif
 
@@ -20,14 +17,12 @@ using std::string;
 using std::ifstream;
 using namespace std;
 
-#define DEFAULT_PORT          (1123)
-
 int main(int argc, char *argv[]) {
-  int       list_s;                /* listening socket     */
-  int       conn_s;                /* connection socket    */
-  short int port;                  /* port number          */
-  struct    sockaddr_in servaddr;  /* socket add structure */
-  char     *endptr;                /* for strtol()         */
+  int       list_s;                /*  listening socket      */
+  int       conn_s;                /*  connection socket     */
+  short int port;                  /*  port number           */
+  struct    sockaddr_in servaddr;  /*  socket add structure  */
+  char     *endptr;                /*  for strtol()          */
 
   /* Get port number from the command line, and set
       to default port if no arguments were supplied */
@@ -37,23 +32,23 @@ int main(int argc, char *argv[]) {
     port = strtol(argv[1], &endptr, 0);
     if ( *endptr ) 
     {
-      Error(10); // port number
+      Error(10);  // port number
     }
   }
   else if ( argc < 2 )
   {
-    port = DEFAULT_PORT;
+    port = 1123;
   }
   else
   {
-    Error(20); // argument
+    Error(20);  // argument
   }
 
   /* Create the listening socket */
 
   if ( (list_s = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
   {
-    Error(11); // listening socket
+    Error(11);  // listening socket
   }
 
   /* Set all bytes in socket address structure to
@@ -72,7 +67,7 @@ int main(int argc, char *argv[]) {
 
   if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 )
   {
-    Error(12); // socket bind
+    Error(12);  // socket bind
   }
 
   if ( listen(list_s, (1024)) < 0 )
@@ -83,7 +78,7 @@ int main(int argc, char *argv[]) {
   /* Enter an infinite loop to respond
      to client requests and echo input */
 
-  char lolcat[1024];
+  char word[1024];
   while (1)
   {
 
@@ -91,21 +86,17 @@ int main(int argc, char *argv[]) {
 
     if ( (conn_s = accept(list_s, NULL, NULL) ) < 0 )
     {
-      Error(14); // socket accept
+      Error(14);  // socket accept
     }
 
-    memset(&lolcat, 0, sizeof(lolcat));
-
-    int amt = read(conn_s, lolcat, 1024); /* write the data from the client to 'lolcat' */
+    memset(&word, 0, sizeof(word));  // empty out word
+    read(conn_s, word, 1024);  // write the input to 'word'
     
-    /* TODO: Turn the following code into a Lookup
-             function, and move to an external file. */
-    
-    Define(lolcat, conn_s);
+    Define(word, conn_s);  // main lookup and print 
 
     if ( close(conn_s) < 0 )
     {
-      Error(15); // socket close
+      Error(15);  // socket close
     }
   }
 }

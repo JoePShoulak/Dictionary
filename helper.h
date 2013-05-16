@@ -23,26 +23,39 @@ int Send(int socket, string word)
 string Error(int errorNum, int send=1, int crash=1)
 {
   string errorType;
-  if (errorNum == 10)                 // Normally I'd use braces,
-    errorType = "Port number";        // but here, it just clutters
-  else if (errorNum == 11)            // the code. I'll try to get
-    errorType = "Listening socket";   // a switch statement working  
-  else if (errorNum == 12)            // since this is a perfect
-    errorType = "Socket bind";        // example of a use for it.
-  else if (errorNum == 13)
-    errorType = "Socket listen";
-  else if (errorNum == 14)
-    errorType = "Socket accept";
-  else if (errorNum == 15)
-    errorType = "Socket close";
-  else if (errorNum == 20)
-    errorType = "Argument";
-  else if (errorNum == 21)
-    errorType = "Dictionary read";
-  else if (errorNum == 30)
-    errorType = "No definition";
-  else
-    errorType = "Unknown";
+  switch(errorNum)
+  {
+    case 10:
+      errorType = "Port number";
+      break;
+    case 11:
+      errorType = "Listening socket";
+      break;
+    case 12:
+      errorType = "Socket bind";
+      break;
+    case 13:
+      errorType = "Socket listen";
+      break;
+    case 14:
+      errorType = "Socket accept";
+      break;
+    case 15:
+      errorType = "Socket close";
+      break;
+    case 20:
+      errorType = "Argument";
+      break;
+    case 21:
+      errorType = "Dictionary read";
+      break;
+    case 30:
+      errorType = "No definition";
+      break;
+    default:
+      errorType = "Unknown";
+      break;
+  }
   string message = "";
   std::stringstream ss;
   ss << errorNum;

@@ -38,8 +38,7 @@ int main(int argc, char *argv[]) {
     port = strtol(argv[1], &endptr, 0);
     if ( *endptr ) 
     {
-      char error[] = "port number";
-      Crash(error);
+      Crash(10); // port number
     }
   }
   else if ( argc < 2 )
@@ -48,16 +47,14 @@ int main(int argc, char *argv[]) {
   }
   else
   {
-    char error[] = "argument";
-    Crash(error);
+    Crash(20); // argument
   }
 	
   /* Create the listening socket */
 
   if ( (list_s = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
   {
-    char error[] = "listening socket";
-    Crash(error);
+    Crash(11); // listening socket
   }
 
   /* Set all bytes in socket address structure to
@@ -76,14 +73,12 @@ int main(int argc, char *argv[]) {
 
   if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 )
   {
-    char error[] = "socket bind";
-    Crash(error);
+    Crash(12); // socket bind
   }
 
   if ( listen(list_s, (1024)) < 0 )
   {
-    char error[] = "socket listen";
-    Crash(error);
+    Crash(13); // socket listen
   }
     
   /* Enter an infinite loop to respond
@@ -97,8 +92,7 @@ int main(int argc, char *argv[]) {
 
     if ( (conn_s = accept(list_s, NULL, NULL) ) < 0 )
     {
-      char error[] = "socket accept";
-      Crash(error);
+      Crash(14); // socket accept
     }
 
     memset(&lolcat, 0, sizeof(lolcat));   /* So THAT'S what memset is for...            */
@@ -112,8 +106,7 @@ int main(int argc, char *argv[]) {
 
     if ( close(conn_s) < 0 )
     {
-      char error[] = "socket close";
-      Crash(error);
+      Crash(15); // socket close
     }
   }
 }

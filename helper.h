@@ -9,14 +9,30 @@
 
 using std::ifstream;
 using std::string;
+using std::cout;
 
-void Crash(char errorType[])
+int Crash(int errorNum)
 {
-  char errorMessage[80];
-  strcpy(errorMessage, "DICTIONARY: Fatal ");
-  strcat(errorMessage, errorType);
-  strcat(errorMessage, " error.\n");
-  fprintf(stderr, "%s", errorMessage);
+  string errorType;
+  if (errorNum == 10)                 // Normally I'd use braces,
+    errorType = "port number";        // but here, it just clutters
+  else if (errorNum == 11)            // the code. I'll try to get
+    errorType = "listening socket";   // a switch statement working  
+  else if (errorNum == 12)            // since this is a perfect
+    errorType = "socket bind";        // example of a use for it.
+  else if (errorNum == 13)
+    errorType = "socket listen";
+  else if (errorNum == 14)
+    errorType = "socket accept";
+  else if (errorNum == 15)
+    errorType = "socket close";
+  else if (errorNum == 20)
+    errorType = "argument";
+  else if (errorNum == 21)
+    errorType = "dictionary read";
+  else
+    errorType = "unknown";
+  cout << "Fatal " << errorType << " error. (code " << errorNum << ")\n";  
   exit(EXIT_FAILURE);
 }
 
@@ -57,8 +73,7 @@ void Define(char toDefine[], int sock)
   }
   else
   {
-    char error[] = "dictionary";
-    Crash(error);
+    Crash(21); // dictionary
   }
 }
 

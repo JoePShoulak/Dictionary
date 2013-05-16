@@ -46,11 +46,6 @@ void Define(char toDefine[], int sock)
         write(conn_s, ("%s", wordDef.data()), wordDef.length());
         write(conn_s, "\n", 1);
       }
-      else
-      {
-        write(conn_s, "Word not in dictionary.\n", 34);
-        break;
-      }
     }
     myfile.close();
   }

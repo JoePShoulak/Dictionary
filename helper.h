@@ -9,6 +9,14 @@ using std::ifstream;
 using std::string;
 using std::cout;
 
+string Itos(int toS)
+{
+  std::stringstream ss;
+  ss << toS;
+  string number( ss.str() );
+  return number;
+}
+
 string Strip(string word, int amount)
 {
   return word.substr(0, (word.length() - amount) );
@@ -57,9 +65,9 @@ string Error(int errorNum, int send=1, int crash=1)
       break;
   }
   string message = "";
-  std::stringstream ss;
-  ss << errorNum;
-  string number(ss.str());
+  // std::stringstream ss;
+  // ss << errorNum;
+  // string number(ss.str());
   message += errorType;
   message += " error";
   if (crash)
@@ -67,7 +75,7 @@ string Error(int errorNum, int send=1, int crash=1)
     message += " (fatal)";
   }
   message += ". (code ";
-  message += string( ss.str() );
+  message += string( Itos(errorNum) );
   message += ")\n";
   if (send)
   {

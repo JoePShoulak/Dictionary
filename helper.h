@@ -29,6 +29,7 @@ void Define(char toDefine[], int sock)
   ifstream myfile ("definitions.txt");
   if (myfile.is_open())
   {
+    int count = 0;
     while ( myfile.good() )
     {
       getline(myfile,line);
@@ -36,6 +37,7 @@ void Define(char toDefine[], int sock)
       string word(line.substr(0,pos));
       if (input.compare(word) == 0)
       {
+        count++;
         string rest = line.substr(pos+4);
         int new_pos = rest.find("!@#$");
         string wordType(rest.substr(0,new_pos));
@@ -46,6 +48,10 @@ void Define(char toDefine[], int sock)
         write(conn_s, ("%s", wordDef.data()), wordDef.length());
         write(conn_s, "\n", 1);
       }
+    }
+    if (count == 0)
+    {
+      write(conn_s, "Word not yet in dictionary.\n", 29);
     }
     myfile.close();
   }

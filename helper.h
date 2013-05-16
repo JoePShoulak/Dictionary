@@ -5,13 +5,22 @@
 #include <fstream>   /* TODO: Find out       */
 #include <sstream>   /* TODO: Find out       */
 
-/* TODO: Get to work, then include in server */
-
 using std::ifstream;
 using std::string;
 using std::cout;
 
-int Crash(int errorNum)
+string Strip(string word, int amount)
+{
+  return word.substr(0, (word.length() - amount) );
+}
+
+int Send(int socket, string word)
+{
+  return write(socket, ( "%s", word.data() ), word.length() );
+}
+
+
+void Error(int errorNum, int crash=0)
 {
   string errorType;
   if (errorNum == 10)                 // Normally I'd use braces,
@@ -32,48 +41,58 @@ int Crash(int errorNum)
     errorType = "dictionary read";
   else
     errorType = "unknown";
-  cout << "Fatal " << errorType << " error. (code " << errorNum << ")\n";  
-  exit(EXIT_FAILURE);
+  if (crash)
+  {
+  cout << "Fatal ";
+  }
+  cout  << errorType << " error. (code " << errorNum << ")\n";  
+  if (crash)
+  {
+    exit(EXIT_FAILURE);
+  }
 }
 
 void Define(char toDefine[], int sock)
 {
   string input(toDefine);
-  int conn_s = sock;
-  input = input.substr(0, (input.length()-2));
+  input = Strip(input, 2);  // strip off the end
   string line;
-  ifstream myfile ("definitions.txt");
+  ifstream myfile ("definitions.txt");  // open the file
   if (myfile.is_open())
   {
     int count = 0;
     while ( myfile.good() )
     {
       getline(myfile,line);
-      unsigned pos = line.find("!@#$");
-      string word(line.substr(0,pos));
-      if (input.compare(word) == 0)
+      int pos1 = line.find("!@#$");
+      string word(line.substr(0,pos1));  // parse for the word
+      if (input.compare(word) == 0)  // if it matches the input...
       {
         count++;
-        string rest = line.substr(pos+4);
-        int new_pos = rest.find("!@#$");
-        string wordType(rest.substr(0,new_pos));
-        string wordDef(rest.substr(new_pos+4));
-        write(conn_s, "  ", 2);
-        write(conn_s, ("%s", wordType.data()), wordType.length());
-        write(conn_s, ": ", 2);
-        write(conn_s, ("%s", wordDef.data()), wordDef.length());
-        write(conn_s, "\n", 1);
+        string rest = line.substr(pos1+4);
+        int pos2 = rest.find("!@#$");
+        string wordType(rest.substr(0,pos2));   // parse for type
+        string wordDef(rest.substr(pos2+4));    // parse for definition
+        string word = "  " + input + " ";          // word
+        string theRest = "("  + wordType + "): ";  // word type &
+        theRest += wordDef + "\n";                 // definition
+        string bold("\x1b[1m");
+        string unbold("\x1b[0m");
+        Send(sock, bold);
+        Send(sock, word);
+        Send(sock, unbold);
+        Send(sock, theRest);
       }
     }
-    if (count == 0)
+    if (count == 0) // If no matches have been found...
     {
-      write(conn_s, "Word not yet in dictionary.\n", 29);
+      write(sock, "Word not yet in dictionary.\n", 29);
     }
     myfile.close();
   }
   else
   {
-    Crash(21); // dictionary
+    Error(21, 1); // dictionary
   }
 }
 

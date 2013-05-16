@@ -10,7 +10,7 @@
 #ifndef HELPER_H
   #define HELPER_H
 
-  void Crash(char errorType[]);
+
   void Define(char toDefine[], int sock);
 
 #endif
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
     port = strtol(argv[1], &endptr, 0);
     if ( *endptr ) 
     {
-      Crash(10); // port number
+      Error(10); // port number
     }
   }
   else if ( argc < 2 )
@@ -47,14 +47,14 @@ int main(int argc, char *argv[]) {
   }
   else
   {
-    Crash(20); // argument
+    Error(20); // argument
   }
-	
+
   /* Create the listening socket */
 
   if ( (list_s = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
   {
-    Crash(11); // listening socket
+    Error(11); // listening socket
   }
 
   /* Set all bytes in socket address structure to
@@ -73,12 +73,12 @@ int main(int argc, char *argv[]) {
 
   if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 )
   {
-    Crash(12); // socket bind
+    Error(12); // socket bind
   }
 
   if ( listen(list_s, (1024)) < 0 )
   {
-    Crash(13); // socket listen
+    Error(13);
   }
     
   /* Enter an infinite loop to respond
@@ -92,10 +92,10 @@ int main(int argc, char *argv[]) {
 
     if ( (conn_s = accept(list_s, NULL, NULL) ) < 0 )
     {
-      Crash(14); // socket accept
+      Error(14); // socket accept
     }
 
-    memset(&lolcat, 0, sizeof(lolcat));   /* So THAT'S what memset is for...            */
+    memset(&lolcat, 0, sizeof(lolcat));
 
     int amt = read(conn_s, lolcat, 1024); /* write the data from the client to 'lolcat' */
     
@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
 
     if ( close(conn_s) < 0 )
     {
-      Crash(15); // socket close
+      Error(15); // socket close
     }
   }
 }

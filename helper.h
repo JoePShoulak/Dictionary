@@ -5,6 +5,8 @@
 #include <fstream>   /* also for files    */
 #include <sstream>   /* i to s converion  */
 
+#define CRASH exit(EXIT_FAILURE)
+
 using std::ifstream; // file I/O
 using std::stringstream; // i to s conversions
 using namespace std; // strings and whatnot
@@ -62,28 +64,25 @@ string ErrorLookup(int errorNum) // looks up errors based off num code
   }
 }
 
-string Error(int errorNum, int send=1, int crash=1)  // reports error
+string Error(int errorNum, int send=1, int fatal=1)  // reports error
 {
   string errorType = ErrorLookup(errorNum);
-  string message = "";
-  message += errorType; // TODO: get interpolation to work
-  message += " error";
-  if (crash)
+  ostringstream message;
+  message << errorType << " error";
+  if (fatal)
   {
-    message += " (fatal)";
+    message << " (fatal)";
   }
-  message += ". (code ";
-  message += string( Itos(errorNum) ); // TODO: Same here
-  message += ")\n";
+  message << ". (code " << string( Itos(errorNum) ) << ")\n";
   if (send)
   {
-    cout << message;
+    cout << message.str();
   }
-  if (crash)
+  if (fatal)
   {
-    exit(EXIT_FAILURE);
+    CRASH;
   }
-  return message;
+  return message.str();
 }
 
 void Define(char toDefine[], int sock)  // go get the definition
@@ -110,8 +109,7 @@ void Define(char toDefine[], int sock)  // go get the definition
         string word = "  " + input + " ";       // word
         string theRest = "("  + wordType + "): ";  // word type
         theRest += wordDef + "\n";                 // word definition
-        Send(sock, Bold( word) );  // send the word
-        Send(sock, theRest);  // send the rest
+        Send(sock, ( Bold(word) + theRest ) );
       }
     }
     if (count == 0)  // If no matches have been found...

@@ -1,15 +1,14 @@
-#include <string>    /* for strings          */
-#include <stdio.h>   /* for I/O              */
-#include <stdlib.h>  /* for good measure     */
-#include <iostream>  /* for file reading     */
-#include <fstream>   /* TODO: Find out       */
-#include <sstream>   /* int converter        */
+#include <string>    /* for strings       */
+#include <stdio.h>   /* for I/O           */
+#include <stdlib.h>  /* for good measure  */
+#include <iostream>  /* for file reading  */
+#include <sstream>   /* i to s converion  */
 
-using std::ifstream;
-using std::stringstream;
-using namespace std;
+using std::ifstream; // file I/O
+using std::stringstream; // i to s conversions
+using namespace std; // strings and whatnot
 
-string Itos(int toS)
+string Itos(int toS) // converts an int to a c++ string
 {
   stringstream ss;
   ss << toS;
@@ -17,21 +16,21 @@ string Itos(int toS)
   return number;
 }
 
-string Strip(string word, int amount)
+string Strip(string word, int amount)  // remove the last x characters
 {
   return word.substr(0, (word.length() - amount) );
 }
 
-int Send(int socket, string word)
+int Send(int socket, string word) // wrapper for write
 {
   return write(socket, ( "%s", word.data() ), word.length() );
+}
 
-
-string ErrorLookup(int errorNum)
+string ErrorLookup(int errorNum) // looks up errors based off num code
 {
   switch(errorNum)
   {
-    case 10:
+    case 10:                       // ------ sockety errors ------ //
       return "Port number";
     case 11:
       return "Listening socket";
@@ -43,29 +42,29 @@ string ErrorLookup(int errorNum)
       return "Socket accept";
     case 15:
       return "Socket close";
-    case 20:
+    case 20:                       // -------- CLI errors -------- //
       return "Argument";
     case 21:
       return "Dictionary read";
-    case 30:
+    case 30:                       // ----- dictionary error ----- //
       return "No definition";
-    default:
+    default:                       // ------- other errors ------- //
       return "Unknown";
   }
 }
 
-string Error(int errorNum, int send=1, int crash=1)
+string Error(int errorNum, int send=1, int crash=1)  // reports error
 {
   string errorType = ErrorLookup(errorNum);
   string message = "";
-  message += errorType;
+  message += errorType; // TODO: get interpolation to work
   message += " error";
   if (crash)
   {
     message += " (fatal)";
   }
   message += ". (code ";
-  message += string( Itos(errorNum) );
+  message += string( Itos(errorNum) ); // TODO: Same here
   message += ")\n";
   if (send)
   {
@@ -78,7 +77,7 @@ string Error(int errorNum, int send=1, int crash=1)
   return message;
 }
 
-void Define(char toDefine[], int sock)
+void Define(char toDefine[], int sock)  // go get the definition
 {
   string input(toDefine);
   input = Strip(input, 2);  // strip off the end
@@ -99,20 +98,20 @@ void Define(char toDefine[], int sock)
         int pos2 = rest.find("!@#$");
         string wordType(rest.substr(0,pos2));   // parse for type
         string wordDef(rest.substr(pos2+4));    // parse for definition
-        string word = "  " + input + " ";          // word
-        string theRest = "("  + wordType + "): ";  // word type &
-        theRest += wordDef + "\n";                 // definition
-        string bold("\x1b[1m");
-        string unbold("\x1b[0m");
-        Send(sock, bold);
-        Send(sock, word);
-        Send(sock, unbold);
-        Send(sock, theRest);
+        string word = "  " + input + " ";       // word
+        string theRest = "("  + wordType + "): ";  // word type
+        theRest += wordDef + "\n";                 // word definition
+        string bold("\x1b[1m");  // bold via VT100 escape sequences
+        string unbold("\x1b[0m");  // standard text via same above
+        Send(sock, bold);  // bold it
+        Send(sock, word);  // send the word
+        Send(sock, unbold);  // unbold
+        Send(sock, theRest);  // send the rest
       }
     }
-    if (count == 0) // If no matches have been found...
+    if (count == 0)  // If no matches have been found...
     { 
-      Send(sock, Error(30, 0, 0) );
+      Send(sock, Error(30, 0, 0) ); // no definition
     }
     myfile.close();
   }

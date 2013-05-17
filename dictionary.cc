@@ -1,15 +1,13 @@
-#include <sys/socket.h>    // socket def
-#include <sys/types.h>     // socket types
-#include <arpa/inet.h>     // inet funtions
-#include <unistd.h>        // UNIX functions
-#include <string.h>        // strings
-#include <stdlib.h>        // standard
-#include <stdio.h>         // for std I/O
-#include <iostream>        // for file I/O
-#include <fstream>         // also for files
-#include <sstream>         // i to s converion
-
-#include "lexical_cast.h"  // for string conversions
+#include <sys/socket.h>  // socket def
+#include <sys/types.h>   // socket types
+#include <arpa/inet.h>   // inet funtions
+#include <unistd.h>      // UNIX functions
+#include <string.h>      // strings
+#include <stdlib.h>      // standard
+#include <stdio.h>       // for std I/O
+#include <iostream>      // for file I/O
+#include <fstream>       // also for files
+#include <sstream>       // i to s converion
 
 using std::ifstream;
 using std::stringstream;
@@ -18,11 +16,10 @@ using namespace std;
 // User-defined wrappers 
 
 // converts an int to a c++ string
-// via a stream. TODO(Joe): can this be
-// done without streams?
 string IntToString(int to_convert) {
-  string the_string = string(itoa(to_convert));
-  return the_string;
+  char converted[50];
+  int n  = sprintf(converted, "%d", to_convert);
+  return converted;
 }
 // wraps a c++ string with the 
 // escape code for 'bold' and

@@ -4,48 +4,57 @@
 #include <unistd.h>      // UNIX functions
 #include <string.h>      // strings
 #include <stdlib.h>      // standard
-#include <iostream>      // for file I/O
 #include <stdio.h>       // for std I/O
+#include <iostream>      // for file I/O
 #include <fstream>       // also for files
 #include <sstream>       // i to s converion
 
-using std::string;
 using std::ifstream;
 using std::stringstream;
 using namespace std;
 
-// Wrappers 
-string IntToString(int to_string)  // converts an int to a c++ string
-{
+// User-defined wrappers 
+
+// converts an int to a c++ string
+// via a stream. TODO(Joe): can this be
+// done without streams?
+string IntToString(int to_string) {
   stringstream stream;
   stream << to_string;
-  string number( stream.str() );
-  return number;
+  string the_string = stream.str();
+  return the_string;
 }
-
-string Bold(string toBold)
-{
-  ostringstream bolded;
-  bolded << "\x1b[1m" << toBold << "\x1b[0m";
-  return bolded.str();
+// wraps a c++ string with the 
+// escape code for 'bold' and
+// 'normal' text. The HTML
+// equivelant would be 
+// <b>text</b>.
+string Bold(string to_bold) {
+  string bolded = "\x1b[1m";
+  bolded += to_bold;
+  bolded += "\x1b[0m";
+  return bolded;
 }
-
-string Strip(string word, int amount)  // remove the last x characters
-{
-  return word.substr(0, (word.length() - amount) );
+// returns a substring of a 
+// c++ string, up until the
+// last X characters.
+string Strip(string word, int amount) {
+  return word.substr(0, (word.length() - amount));
 }
-
-int Send(int socket, string word)  // wrapper for write
-{
-  return write(socket, ( "%s", word.data() ), word.length() );
+// wrapper for write that
+// makes it handle c++ strings,
+// and automatically calulates
+// length.
+int Send(int socket, string word) {
+  return write(socket, ("%s", word.data()), word.length());
 }
 
 // User-defined functions
 
-string ErrorLookup(int errorNum)  // looks up errors based off num code
-{
-  switch(errorNum)
-  {
+// takes the error code and returns
+// the appropriate error message.
+string ErrorLookup(int error_num) {
+  switch(error_num) {
     case 10:                      // ------ sockety errors ------ //
       return "Port number";
     case 11:
@@ -68,150 +77,112 @@ string ErrorLookup(int errorNum)  // looks up errors based off num code
       return "Unknown";
   }
 }
-
-string Error(int errorNum, int send=1, int fatal=1)  // reports error
-{
-  string errorType = ErrorLookup(errorNum);
-  ostringstream message;
-  message << errorType << " error";
-  if (fatal)
-  {
-    message << " (fatal)";
-  }
-  message << ". (code " << string( IntToString(errorNum) ) << ")\n";
-  if (send)
-  {
-    cout << message.str();
-  }
-  if (fatal)
-  {
-    exit(EXIT_FAILURE);
-  }
-  return message.str();
+// calls an error. if send is non-zero,
+// the error is sent to the server. If
+// it is zero, it is returned to be
+// sent to the client (if you want).
+// if fatal is non-zero,
+// exit(EXIT_FAILURE) is called, and
+// the server crashes.
+string Error(int error_num, int send, int fatal) {
+  string error_type = ErrorLookup(error_num);
+  string message = error_type;
+  message += " error";
+  if (fatal) { message += " (fatal)"; }
+  message += ". (code ";
+  message += string(IntToString(error_num));
+  message += ")\n";
+  if (send) { fprintf(stdout, "%s", message.data()); }
+  if (fatal) { exit(EXIT_FAILURE); }
+  return message;
 }
-
-void Define(char toDefine[], int sock)  // go get the definition
-{
-  string input(toDefine);
+// the workhorse of the program.
+// takes the input, scans the 117,661
+// definitions, checking each one,
+// returning the bolded word,
+// its type, and definition
+// like so:
+// <indent/><b>word</b> (type): definition<br/>
+void Define(char to_define[], int sock) {
+  string input(to_define);
   input = Strip(input, 2);  // strip off the end
   string line;
-  ifstream myfile ("definitions.txt");  // open the file
-  if (myfile.is_open())
-  {
+  ifstream my_file("definitions.txt");  // open the file
+  if (my_file.is_open()) {
     int count = 0;
-    while ( myfile.good() )
-    {
-      getline(myfile,line);
+    while (my_file.good()) {
+      getline(my_file,line);
       int pos1 = line.find("!@#$");
       string word(line.substr(0,pos1));  // parse for the word
-      if (input.compare(word) == 0)  // if it matches the input...
-      {
-        count++;
+      if (input.compare(word) == 0) {  // if it matches the input...
+        ++count;
         string rest = line.substr(pos1+4);
         int pos2 = rest.find("!@#$");
-        string wordType(rest.substr(0,pos2));      // parse for type
-        string wordDef(rest.substr(pos2+4));       // parse for definition
+        string word_type(rest.substr(0,pos2));      // parse for type
+        string word_def(rest.substr(pos2+4));       // parse for definition
         string word = "  " + input + " ";          // word
-        string theRest = "("  + wordType + "): ";  // word type
-        theRest += wordDef + "\n";                 // word definition
-        Send(sock, ( Bold(word) + theRest ) );
+        string type_and_def = "("  + word_type + "): ";  // word type
+        type_and_def += word_def + "\n";                 // word definition
+        Send(sock, (Bold(word) + type_and_def));
       }
     }
-    if (count == 0)  // If no matches have been found...
-    { 
-      Send(sock, Error(30, 0, 0) );  // no definition
+    if (count == 0) { 
+      Send(sock, Error(30, 0, 0));  // no definition, don't send, non-fatal
     }
-    myfile.close();
-  }
-  else
-  {
-    Error(21, 1);  // dictionary
+    my_file.close();
+  } else {
+    Error(21, 1, 1);  // dictionary, send, fatal
   }
 }
-
 
 // main
 
+// creates the sockets, handles
+// the requests, calls all other
+// functions.
 int main(int argc, char *argv[]) {
   int       list_s;                // listening socket
   int       conn_s;                // connection socket
   short int port;                  // port number
   struct    sockaddr_in servaddr;  // socket add structure
   char     *endptr;                // for strtol()
-
-  // Get port number from the command line, and set
-  // to default port if no arguments were supplied
-
-  if ( argc == 2 )
-  {
+  if (argc == 2) {
     port = strtol(argv[1], &endptr, 0);
-    if ( *endptr ) 
-    {
-      Error(10);  // port number
-    }
-  }
-  else if ( argc < 2 )
-  {
+    if (*endptr) { Error(10, 1, 1); }  // port number, send, fatal
+  } else if (argc < 2) {
     port = 1123;
+  } else { Error(20, 1, 1); }  // argument, send, fatal
+  // Create the listening socket
+  if ((list_s = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+    Error(11, 1, 1);  // listening socket, send, fatal
   }
-  else
-  {
-    Error(20);  // argument
-  }
-
-  // Create the listening socke
-
-  if ( (list_s = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
-  {
-    Error(11);  // listening socket
-  }
-
   // Set all bytes in socket address structure to
   // zero, and fill in the relevant data member
-
   memset(&servaddr, 0, sizeof(servaddr));
   servaddr.sin_family      = AF_INET;
   servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
   servaddr.sin_port        = htons(port);
-
   // Bind our socket addresss to the
   // listening socket, and call listen()
-
   int on = 1;
   setsockopt(list_s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-
-  if ( bind(list_s, (struct sockaddr *) &servaddr, sizeof(servaddr)) < 0 )
-  {
-    Error(12);  // socket bind
+  if (bind(list_s,(struct sockaddr *) &servaddr, sizeof(servaddr)) < 0) {
+    Error(12, 1, 1);  // socket bind, send, fatal
   }
-
-  if ( listen(list_s, (1024)) < 0 )
-  {
-    Error(13);
+  if (listen(list_s, (1024)) < 0) {
+    Error(13, 1, 1); // listening socket, send, fatal
   }
-    
   // Enter an infinite loop to respond
   // to client requests and echo input
-
   char word[1024];
-  while (1)
-  {
-
+  while (1) {
     // Wait for a connection, then accept() it
-
-    if ( (conn_s = accept(list_s, NULL, NULL) ) < 0 )
-    {
-      Error(14);  // socket accept
+    if ((conn_s = accept(list_s, NULL, NULL)) < 0) {
+      Error(14, 1, 1);  // socket accept, send, fatal
     }
-
     memset(&word, 0, sizeof(word));  // empty out word
     read(conn_s, word, 1024);  // write the input to 'word'
-    
     Define(word, conn_s);  // main lookup and print 
-
-    if ( close(conn_s) < 0 )
-    {
-      Error(15);  // socket close
-    }
+    if(close(conn_s) < 0) { Error(15, 1, 1); }  // socket close, send, fatal
   }
 }

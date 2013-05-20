@@ -4,12 +4,11 @@
 #include <unistd.h>      // UNIX functions
 #include <string.h>      // strings
 #include <stdlib.h>      // standard
-#include <stdio.h>       // for std I/O
+#include <stdio.h>       // printf
 #include <iostream>      // for file I/O
 #include <fstream>       // also for files
 
 using std::ifstream;
-using std::stringstream;
 using namespace std;
 
 // User-defined wrappers 
@@ -68,7 +67,7 @@ string ErrorLookup(int error_num) {
     case 21:
       return "Dictionary read";
     case 30:                      // ----- dictionary error ----- //
-      return "No definition";
+      return "Not in dict";
     default:                      // ------- other errors ------- //
       return "Unknown";
   }
@@ -127,13 +126,9 @@ void Define(char to_define[], int sock) {
         Send(sock, (Bold(word) + type_and_def));
       }
     }
-    if (count == 0) { 
-      Send(sock, Error(30, 0, 0));  // no definition, don't send, non-fatal
-    }
+    if (!count) { Send(sock, Error(30, 0, 0)); }  // not in dict, keep, benigne
     my_file.close();
-  } else {
-    Error(21, 1, 1);  // dictionary, send, fatal
-  }
+  } else { Error(21, 1, 1); }  // dictionary, send, fatal
 }
 
 // main

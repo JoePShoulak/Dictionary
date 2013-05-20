@@ -7,7 +7,6 @@
 #include <stdio.h>       // for std I/O
 #include <iostream>      // for file I/O
 #include <fstream>       // also for files
-#include <sstream>       // i to s converion
 
 using std::ifstream;
 using std::stringstream;
@@ -101,6 +100,11 @@ string Error(int error_num, int send, int fatal) {
 // like so:
 // <indent/><b>word</b> (type): definition<br/>
 void Define(char to_define[], int sock) {
+  struct entry {
+    string word;
+    string type;
+    string definition;
+  } result;
   string input(to_define);
   input = Strip(input, 2);  // strip off the end
   string line;
@@ -110,16 +114,16 @@ void Define(char to_define[], int sock) {
     while (my_file.good()) {
       getline(my_file,line);
       int pos1 = line.find("!@#$");
-      string word(line.substr(0,pos1));  // parse for the word
-      if (input.compare(word) == 0) {  // if it matches the input...
+      result.word = line.substr(0,pos1);  // parse for the word
+      if (input.compare(result.word) == 0) {  // if it matches the input...
         ++count;
         string rest = line.substr(pos1+4);
         int pos2 = rest.find("!@#$");
-        string word_type(rest.substr(0,pos2));      // parse for type
-        string word_def(rest.substr(pos2+4));       // parse for definition
+        result.type = (rest.substr(0,pos2));      // parse for type
+        result.definition = (rest.substr(pos2+4)); // parse for definition
         string word = "  " + input + " ";          // word
-        string type_and_def = "("  + word_type + "): ";  // word type
-        type_and_def += word_def + "\n";                 // word definition
+        string type_and_def = "("  + result.type + "): ";  // word type
+        type_and_def += result.definition + "\n";       // word definition
         Send(sock, (Bold(word) + type_and_def));
       }
     }

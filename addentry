@@ -1,0 +1,16 @@
+#!/bin/bash
+
+echo "Enter the word"
+read word
+echo "Enter the word type"
+read type
+echo "Enter the definition"
+read def
+
+echo "$word!@#\$$type!@#\$$def" >> ./definitions.txt
+cp ./definitions.txt ./.definitions.txt
+sort ./definitions.txt > definitions.sorted.txt
+rm ./definitions.txt
+mv definitions.sorted.txt definitions.txt
+
+echo "Done"

@@ -103,7 +103,7 @@ void Define(char to_define[], int sock) {
   struct entry {
     string word;
     string type;
-    string definition;
+    string def;
   } result;
   string input(to_define);
   input = Strip(input, 2);  // strip off the end
@@ -120,10 +120,10 @@ void Define(char to_define[], int sock) {
         string rest = line.substr(pos1+4);
         int pos2 = rest.find("!@#$");
         result.type = (rest.substr(0,pos2));      // parse for type
-        result.definition = (rest.substr(pos2+4)); // parse for definition
+        result.def = (rest.substr(pos2+4)); // parse for definition
         string word = "  " + input + " ";          // word
         string type_and_def = "("  + result.type + "): ";  // word type
-        type_and_def += result.definition + "\n";       // word definition
+        type_and_def += result.def + "\n";       // word definition
         Send(sock, (Bold(word) + type_and_def));
       }
     }

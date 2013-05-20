@@ -68,6 +68,8 @@ string ErrorLookup(int error_num) {
       return "Dictionary read";
     case 30:                      // ----- dictionary error ----- //
       return "Not in dict";
+    case 31:
+      return "Input";
     default:                      // ------- other errors ------- //
       return "Unknown";
   }
@@ -105,30 +107,34 @@ void Define(char to_define[], int sock) {
     string def;
   } result;
   string input(to_define);
-  input = Strip(input, 2);  // strip off the end
-  string line;
-  ifstream my_file("definitions.txt");  // open the file
-  if (my_file.is_open()) {
-    int count = 0;
-    while (my_file.good()) {
-      getline(my_file,line);
-      int pos1 = line.find("!@#$");
-      result.word = line.substr(0,pos1);  // parse for the word
-      if (input.compare(result.word) == 0) {  // if it matches the input...
-        ++count;
-        string rest = line.substr(pos1+4);
-        int pos2 = rest.find("!@#$");
-        result.type = (rest.substr(0,pos2));      // parse for type
-        result.def = (rest.substr(pos2+4)); // parse for definition
-        string word = "  " + input + " ";          // word
-        string type_and_def = "("  + result.type + "): ";  // word type
-        type_and_def += result.def + "\n";       // word definition
-        Send(sock, (Bold(word) + type_and_def));
+  if (input.length() < 3) { // User just pressed enter
+    Send(sock, Error(31, 0, 0)); // input, keep, benign
+  } else {
+    input = Strip(input, 2);  // strip off the end
+    string line;
+    ifstream my_file("definitions.txt");  // open the file
+    if (my_file.is_open()) {
+      int count = 0;
+      while (my_file.good()) {
+        getline(my_file,line);
+        int pos1 = line.find("!@#$");
+        result.word = line.substr(0,pos1);  // parse for the word
+        if (input.compare(result.word) == 0) {  // if it matches the input...
+          ++count;
+          string rest = line.substr(pos1+4);
+          int pos2 = rest.find("!@#$");
+          result.type = (rest.substr(0,pos2));      // parse for type
+          result.def = (rest.substr(pos2+4)); // parse for definition
+          string word = "  " + input + " ";          // word
+          string type_and_def = "("  + result.type + "): ";  // word type
+          type_and_def += result.def + "\n";       // word definition
+          Send(sock, (Bold(word) + type_and_def));
+        }
       }
-    }
-    if (!count) { Send(sock, Error(30, 0, 0)); }  // not in dict, keep, benigne
-    my_file.close();
-  } else { Error(21, 1, 1); }  // dictionary, send, fatal
+      if (!count) { Send(sock, Error(30, 0, 0)); }  // not in dict, keep, benign
+      my_file.close();
+    } else { Error(21, 1, 1); }  // dictionary, send, fatal
+  }
 }
 
 // main

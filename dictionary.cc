@@ -29,7 +29,7 @@ string Bold(string to_bold) {
   bolded += to_bold;
   bolded += "\x1b[0m";
   return bolded;
-}
+ }
 // returns a substring of a 
 // c++ string, up until the
 // last X characters.
@@ -109,7 +109,7 @@ void Define(char to_define[], int sock) {
   string input(to_define);
   if (input.length() < 3) { // User just pressed enter
     Send(sock, Error(31, 0, 0)); // input, keep, benign
-  } else {
+  } else {  // so, if the word is actually a word...
     input = Strip(input, 2);  // strip off the end
     string line;
     ifstream my_file("definitions.txt");  // open the file

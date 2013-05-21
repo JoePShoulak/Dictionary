@@ -50,7 +50,7 @@ int Send(int socket, string word) {
 // the appropriate error message.
 string ErrorLookup(int error_num) {
   switch(error_num) {
-    case 10:                      // ------ sockety errors ------ //
+    case 10:                      // sockety errors
       return "Port number";
     case 11:
       return "Listening socket";
@@ -62,15 +62,15 @@ string ErrorLookup(int error_num) {
       return "Socket accept";
     case 15:
       return "Socket close";
-    case 20:                      // -------- CLI errors -------- //
+    case 20:                      // CLI errors
       return "Argument";
     case 21:
       return "Dictionary read";
-    case 30:                      // ----- dictionary error ----- //
+    case 30:                      // dictionary error
       return "Not in dict";
     case 31:
       return "Input";
-    default:                      // ------- other errors ------- //
+    default:                      // other errors
       return "Unknown";
   }
 }
@@ -94,12 +94,10 @@ string Error(int error_num, int send, int fatal) {
   return message;
 }
 // the workhorse of the program.
-// takes the input, scans the 117,661
+// takes the input, scans the 117,000+
 // definitions, checking each one,
 // returning the bolded word,
 // its type, and definition
-// like so:
-// <indent/><b>word</b> (type): definition<br/>
 void Define(char to_define[], int sock) {
   struct entry {
     string word;
@@ -116,7 +114,7 @@ void Define(char to_define[], int sock) {
     if (my_file.is_open()) {
       int count = 0;
       while (my_file.good()) {
-        getline(my_file,line);
+        getline(my_file, line);
         int pos1 = line.find("!@#$");
         result.word = line.substr(0,pos1);  // parse for the word
         if (input.compare(result.word) == 0) {  // if it matches the input...

@@ -50,28 +50,21 @@ int Send(int socket, string word) {
 // the appropriate error message.
 string ErrorLookup(int error_num) {
   switch(error_num) {
-    case 10:                      // sockety errors
-      return "Port number";
-    case 11:
-      return "Listening socket";
-    case 12:
-      return "Socket bind";
-    case 13:
-      return "Socket listen";
-    case 14:
-      return "Socket accept";
-    case 15:
-      return "Socket close";
-    case 20:                      // CLI errors
-      return "Argument";
-    case 21:
-      return "Dictionary read";
-    case 30:                      // dictionary error
-      return "Not in dict";
-    case 31:
-      return "Input";
-    default:                      // other errors
-      return "Unknown";
+    // sockety errors
+    case 10: return "Port number";
+    case 11: return "Listening socket";
+    case 12: return "Socket bind";
+    case 13: return "Socket listen";
+    case 14: return "Socket accept";
+    case 15: return "Socket close";
+    // CLI errors
+    case 20: return "Argument";
+    case 21: return "Dictionary read";
+    // dictionary errors
+    case 30: return "Not in dict"
+    case 31: return "Input";
+    // all others
+    default: return "Unknown";
   }
 }
 // calls an error. if send is non-zero,

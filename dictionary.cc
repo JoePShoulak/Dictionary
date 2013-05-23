@@ -105,16 +105,18 @@ node Load() {
   if (my_file.is_open()) {
     while (my_file.good()) {
       getline(my_file, line);
-      int pos1 = line.find("!@#$");
-      string rest = line.substr(pos1+4);
-      int pos2 = rest.find("!@#$");
-      node* new_item = new node;
-      cout << line << endl;
-      new_item->word = line.substr(0, pos1); // passes
-      new_item->type = rest.substr(0, pos2);
-      new_item->def  = rest.substr(pos2+4 );
-      new_item->next = end;
-      end = new_item;
+      cout << line.length() << endl;
+      if (line.length()) {
+        int pos1 = line.find("!@#$");
+        string rest = line.substr(pos1+4);
+        int pos2 = rest.find("!@#$");
+        node* new_item = new node;
+        new_item->word = line.substr(0, pos1); // passes
+        new_item->type = rest.substr(0, pos2);
+        new_item->def  = rest.substr(pos2+4 );
+        new_item->next = end;
+        end = new_item;
+      }
       // tried closing file after first "zymotic" (there are two),
       // still crashes. I have no idea where is is happening,
       // because the error message doesn't dive me a line number.
@@ -122,9 +124,6 @@ node Load() {
       //  terminate called after throwing an instance of 'std::out_of_range'
       //    what():  basic_string::substr
       //  Aborted (core dumped)
-      if (new_item->word == "zymotic"){
-        my_file.close();
-      }
     }
   }
   return *end;
@@ -164,7 +163,6 @@ void Define(char to_define[], int sock) {
 int main(int argc, char *argv[]) {
   node head = Load();
   cout << NthNode(head, 5).word << endl;
-  cout << 1 << endl;
 
   int       list_s;                // listening socket
   int       conn_s;                // connection socket

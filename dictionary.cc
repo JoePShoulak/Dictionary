@@ -105,7 +105,6 @@ node Load() {
   if (my_file.is_open()) {
     while (my_file.good()) {
       getline(my_file, line);
-      cout << line.length() << endl;
       if (line.length()) {
         int pos1 = line.find("!@#$");
         string rest = line.substr(pos1+4);
@@ -147,11 +146,22 @@ node NthNode(node head, int n) {
 // definitions, checking each one,
 // returning the bolded word,
 // its type, and definition
-void Define(char to_define[], int sock) {
+void Define(node *entry, char to_define[], int sock) {
+  int count = 0;
   string input(to_define);
   if (input.length() < 3) { // User just pressed enter
     Send(sock, Error(31, 0, 0)); // input, keep, benign
   } else {  // so, if the word is actually a word...
+    while (entry) {
+      if (entry->word == Strip(input,2)) {
+        count++;
+        string output = "  " + Bold(entry->word) + " (" + entry->type + "): ";
+        output += entry->def + "\n";
+        Send(sock, output);
+      }
+      entry = entry->next;
+    }
+  if (!count) { Send(sock, Error(30, 0, 0)); } // not in dict, keep, benign
   }
 }
 
@@ -160,9 +170,11 @@ void Define(char to_define[], int sock) {
 // creates the sockets, handles
 // the requests, calls all other
 // functions.
+
 int main(int argc, char *argv[]) {
+  cout << "Dictionary loading..." << endl;
   node head = Load();
-  cout << NthNode(head, 5).word << endl;
+  cout << "Dictionary loaded" << endl;
 
   int       list_s;                // listening socket
   int       conn_s;                // connection socket
@@ -195,17 +207,26 @@ int main(int argc, char *argv[]) {
   if (listen(list_s, (1024)) < 0) {
     Error(13, 1, 1); // listening socket, send, fatal
   }
+  cout << "Listening socket opened" << endl;
   // Enter an infinite loop to respond
   // to client requests and echo input
   char word[1024];
   while (1) {
+    cout << "Waiting for a connection..." << endl;
     // Wait for a connection, then accept() it
     if ((conn_s = accept(list_s, NULL, NULL)) < 0) {
       Error(14, 1, 1);  // socket accept, send, fatal
     }
+    cout << "  Connection established" << endl;
     memset(&word, 0, sizeof(word));  // empty out word
     read(conn_s, word, 1024);  // write the input to 'word'
-    Define(word, conn_s);  // main lookup and print 
+    string request = word;
+    request = Strip(request, 2);
+    cout << "  User requested definition of \"" << request << "\"" << endl;
+    cout << "  Definining \"" << request << "\"..." << endl;
+    Define(&head, word, conn_s);  // main lookup and print 
+    cout << "  Word defined, and definition sent" << endl;
     if(close(conn_s) < 0) { Error(15, 1, 1); }  // socket close, send, fatal
+    cout << "  Connection closed" << endl;
   }
 }

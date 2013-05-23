@@ -15,8 +15,7 @@ This is a dictionary server I am making to learn under the tutelage of [JART](ht
     Connected to <servername>
     Escape character is '^]'.
     // Enter any word!
-    computer
-      noun: a machine for performing calculations automatically
+      **computer** (noun): a machine for performing calculations automatically
     Connection closed by foreign host.
 ---
 

@@ -61,7 +61,7 @@ string ErrorLookup(int error_num) {
     case 20: return "Argument";
     case 21: return "Dictionary read";
     // dictionary errors
-    case 30: return "Not in dict"
+    case 30: return "Not in dict";
     case 31: return "Input";
     // all others
     default: return "Unknown";
@@ -96,9 +96,10 @@ struct node {
 };
 
 node Load() {
-  node* end = (node*) malloc(sizeof(node));
+  node* end;
+  end = (node*) malloc(sizeof(node));
   cout << 1 << endl;
-  //end->word = "";
+  //end->word = ""; // fails
   end->num = 0; // passes
   cout << 2 << endl;
   end->type = "";
@@ -118,8 +119,8 @@ node Load() {
       node *new_item;
       new_item = (node*) malloc(sizeof(node));
       cout << line.substr(0, pos1);
-      //new_item->word = line.substr(0, pos1);
-      new_item->num = 1;
+      //new_item->word = line.substr(0, pos1); // fails
+      new_item->num = 1; // passes
       new_item->type = rest.substr(0, pos2);
       new_item->def  = rest.substr(pos2+4 );
       new_item->next = end;
@@ -164,8 +165,8 @@ void Define(char to_define[], int sock) {
 // functions.
 int main(int argc, char *argv[]) {
   node head = Load();
-  cout << NthNode(head, 5).num << endl;
-  //cout << NthNode(head, 5).word << endl;
+  cout << NthNode(head, 5).num << endl; // passes 
+  //cout << NthNode(head, 5).word << endl; // fails
 
   int       list_s;                // listening socket
   int       conn_s;                // connection socket

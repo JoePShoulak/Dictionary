@@ -48,8 +48,8 @@ int Send(int socket, string word) {
 
 // takes the error code and returns
 // the appropriate error message.
-string ErrorLookup(int error_num) {
-  switch(error_num) {
+string ErrorLookup(int error_word) {
+  switch(error_word) {
     // sockety errors
     case 10: return "Port number";
     case 11: return "Listening socket";
@@ -74,13 +74,13 @@ string ErrorLookup(int error_num) {
 // if fatal is non-zero,
 // exit(EXIT_FAILURE) is called, and
 // the server crashes.
-string Error(int error_num, int send, int fatal) {
-  string error_type = ErrorLookup(error_num);
+string Error(int error_word, int send, int fatal) {
+  string error_type = ErrorLookup(error_word);
   string message = error_type;
   message += " error";
   if (fatal) { message += " (fatal)"; }
   message += ". (code ";
-  message += string(IntToString(error_num));
+  message += string(IntToString(error_word));
   message += ")\n";
   if (send) { fprintf(stdout, "%s", message.data()); }
   if (fatal) { exit(EXIT_FAILURE); }
@@ -88,26 +88,18 @@ string Error(int error_num, int send, int fatal) {
 }
 
 struct node {
-  //string word;
-  int num;
+  string word;
   string type;
   string def;
   node *next;
 };
 
 node Load() {
-  node* end;
-  end = (node*) malloc(sizeof(node));
-  cout << 1 << endl;
-  //end->word = ""; // fails
-  end->num = 0; // passes
-  cout << 2 << endl;
+  node* end = new node;
+  end->word = "";
   end->type = "";
-  cout << 3 << endl;
   end->def  = "";
-  cout << 4 << endl;
   end->next = NULL;
-  cout << 5 << endl;
   string line;
   ifstream my_file("definitions.txt");
   if (my_file.is_open()) {
@@ -116,16 +108,24 @@ node Load() {
       int pos1 = line.find("!@#$");
       string rest = line.substr(pos1+4);
       int pos2 = rest.find("!@#$");
-      node *new_item;
-      new_item = (node*) malloc(sizeof(node));
-      cout << line.substr(0, pos1);
-      //new_item->word = line.substr(0, pos1); // fails
-      new_item->num = 1; // passes
+      node* new_item = new node;
+      cout << line << endl;
+      new_item->word = line.substr(0, pos1); // passes
       new_item->type = rest.substr(0, pos2);
       new_item->def  = rest.substr(pos2+4 );
       new_item->next = end;
       end = new_item;
-   }   
+      // tried closing file after first "zymotic" (there are two),
+      // still crashes. I have no idea where is is happening,
+      // because the error message doesn't dive me a line number.
+      // here is the message verbatim:
+      //  terminate called after throwing an instance of 'std::out_of_range'
+      //    what():  basic_string::substr
+      //  Aborted (core dumped)
+      if (new_item->word == "zymotic"){
+        my_file.close();
+      }
+    }
   }
   return *end;
 };
@@ -144,8 +144,6 @@ node NthNode(node head, int n) {
   return head;
 }
 
-
-// the workhorse of the program.
 // takes the input, scans the 117,000+
 // definitions, checking each one,
 // returning the bolded word,
@@ -165,8 +163,8 @@ void Define(char to_define[], int sock) {
 // functions.
 int main(int argc, char *argv[]) {
   node head = Load();
-  cout << NthNode(head, 5).num << endl; // passes 
-  //cout << NthNode(head, 5).word << endl; // fails
+  cout << NthNode(head, 5).word << endl;
+  cout << 1 << endl;
 
   int       list_s;                // listening socket
   int       conn_s;                // connection socket

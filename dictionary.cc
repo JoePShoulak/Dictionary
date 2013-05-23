@@ -93,45 +93,71 @@ string Error(int error_num, int send, int fatal) {
   if (fatal) { exit(EXIT_FAILURE); }
   return message;
 }
+
+struct node {
+  string word;
+  string type;
+  string def;
+  node *next;
+};
+
+node Load() {
+  node* end = (node*) malloc(sizeof(node));
+  cout << 1 << endl;
+  end->word = "";
+  cout << 2 << endl;
+  end->type = "";
+  cout << 3 << endl;
+  end->def  = "";
+  cout << 4 << endl;
+  end->next = NULL;
+  cout << 5 << endl;
+  string line;
+  ifstream my_file("definitions.txt");
+  if (my_file.is_open()) {
+    while (my_file.good()) {
+      getline(my_file, line);
+      int pos1 = line.find("!@#$");
+      string rest = line.substr(pos1+4);
+      int pos2 = rest.find("!@#$");
+      node *new_item;
+      new_item = (node*) malloc(sizeof(node));
+      cout << line.substr(0, pos1);
+      new_item->word = line.substr(0, pos1);
+      new_item->type = rest.substr(0, pos2);
+      new_item->def  = rest.substr(pos2+4 );
+      new_item->next = end;
+      end = new_item;
+   }   
+  }
+  return *end;
+};
+
+node NthNode(node head, int n) {
+  int fail = 0;
+  for (int i=1; i<n; i++) {
+    if (!fail) {
+      head = *head.next;
+      if (head.next == NULL) { fail = 1; }
+    } else {
+      cout << "Term out of range" << endl;
+      exit(EXIT_FAILURE);
+    }
+  }
+  return head;
+}
+
+
 // the workhorse of the program.
 // takes the input, scans the 117,000+
 // definitions, checking each one,
 // returning the bolded word,
 // its type, and definition
 void Define(char to_define[], int sock) {
-  struct entry {
-    string word;
-    string type;
-    string def;
-  } result;
   string input(to_define);
   if (input.length() < 3) { // User just pressed enter
     Send(sock, Error(31, 0, 0)); // input, keep, benign
   } else {  // so, if the word is actually a word...
-    input = Strip(input, 2);  // strip off the end
-    string line;
-    ifstream my_file("definitions.txt");  // open the file
-    if (my_file.is_open()) {
-      int count = 0;
-      while (my_file.good()) {
-        getline(my_file, line);
-        int pos1 = line.find("!@#$");
-        result.word = line.substr(0,pos1);  // parse for the word
-        if (input.compare(result.word) == 0) {  // if it matches the input...
-          ++count;
-          string rest = line.substr(pos1+4);
-          int pos2 = rest.find("!@#$");
-          result.type = (rest.substr(0,pos2));      // parse for type
-          result.def = (rest.substr(pos2+4)); // parse for definition
-          string word = "  " + input + " ";          // word
-          string type_and_def = "("  + result.type + "): ";  // word type
-          type_and_def += result.def + "\n";       // word definition
-          Send(sock, (Bold(word) + type_and_def));
-        }
-      }
-      if (!count) { Send(sock, Error(30, 0, 0)); }  // not in dict, keep, benign
-      my_file.close();
-    } else { Error(21, 1, 1); }  // dictionary, send, fatal
   }
 }
 
@@ -141,6 +167,9 @@ void Define(char to_define[], int sock) {
 // the requests, calls all other
 // functions.
 int main(int argc, char *argv[]) {
+  node head = Load();
+  cout << NthNode(head, 5).word << endl;
+
   int       list_s;                // listening socket
   int       conn_s;                // connection socket
   short int port;                  // port number

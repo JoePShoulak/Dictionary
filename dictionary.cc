@@ -49,8 +49,8 @@ int Send(int socket, string word) {
 
 // takes the error code and returns
 // the appropriate error message.
-string Longest(string word1, string word2) {
-  return (word1.length() > word2.length()) ? word1 : word2;
+string Shortest(string word1, string word2) {
+  return (word1.length() > word2.length()) ? word2 : word1;
 }
 
 
@@ -58,17 +58,14 @@ int Alphabetize(string word1, string word2) {
   if (word1 == word2) {
     return 0;
   }
-  cout << word1 << " : " << word2 << endl;
-  int max = Longest(word1, word2).length();
+  int max = Shortest(word1, word2).length();
   for (int i=0; i<max; ++i) {
     int first, second;
     if (word1.length() >= i) {
       first = int(word1[i]);
-      cout << first << endl;
     }
     if (word2.length() >= i) {
       second = int(word2[i]);
-      cout << second << "\n"  << endl;
     }
     if (first == second) {
     } else if (first < second) {
@@ -76,6 +73,11 @@ int Alphabetize(string word1, string word2) {
     } else {
       return 2;
     }
+  }
+  if (word1.length() > word2.length()) {
+    return 1;
+  } else {
+    return 2;
   }
   return 0;
 }
@@ -170,8 +172,8 @@ node* NthNode(node head, int n) {
 // its type, and definition
 void Define(node *entry, char to_define[], int sock) {
   int count = 0;
-  int exponent = 16;
-  int position = pow(2,16);
+  int exponent = 15;
+  int position = pow(2,15);
   node* head = entry;
   entry = NthNode(*head, position);
   string input(to_define);
@@ -196,12 +198,13 @@ void Define(node *entry, char to_define[], int sock) {
         position -= pow(2, exponent);
         cout << "- ";
       }
+      cout << exponent << endl;
       if (exponent != 0) {
         exponent--;
-      } else { exit(EXIT_FAILURE); }
-      cout << exponent << endl;
-      string newline = "\n";
-      cout << int(newline[0]) << endl;
+      } else {
+      //  exit(EXIT_FAILURE);
+        exponent = 0;
+      }
       entry = NthNode(*head, position);
     }
   if (!count) { Send(sock, Error(30, 0, 0)); } // not in dict, keep, benign

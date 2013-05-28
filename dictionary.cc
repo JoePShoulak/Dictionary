@@ -5,6 +5,7 @@
 #include <string.h>      // strings
 #include <stdlib.h>      // standard
 #include <stdio.h>       // printf
+#include <math.h>        // pow
 #include <iostream>      // for file I/O
 #include <fstream>       // also for files
 
@@ -48,6 +49,34 @@ int Send(int socket, string word) {
 
 // takes the error code and returns
 // the appropriate error message.
+string Longest(string word1, string word2) {
+  return (word1.length() > word2.length()) ? word1 : word2;
+}
+
+
+int Alphabetize(string word1, string word2) {
+  if (word1 == word2) {
+    return 0;
+  }
+  int max = Longest(word1, word2).length();
+  for (int i=0; i<max; ++i) {
+    int first, second;
+    if (word1.length() >= i) {
+      first = int(word1[i]);
+    }
+    if (word2.length() >= i) {
+      second = int(word2[i]);
+    }
+    if (first == second) {
+    } else if (first < second) {
+      return 1;
+    } else {
+      return 2;
+    }
+  }
+  return 0;
+}
+
 string ErrorLookup(int error_word) {
   switch(error_word) {
     // sockety errors
@@ -91,6 +120,7 @@ struct node {
   string word;
   string type;
   string def;
+  int index; // adding index, please don't crash
   node *next;
 };
 
@@ -101,6 +131,7 @@ node Load() {
   end->def  = "";
   end->next = NULL;
   string line;
+  int it = 0;
   ifstream my_file("definitions.txt");
   if (my_file.is_open()) {
     while (my_file.good()) {
@@ -109,37 +140,25 @@ node Load() {
         int pos1 = line.find("!@#$");
         string rest = line.substr(pos1+4);
         int pos2 = rest.find("!@#$");
-        node* new_item = new node;
-        new_item->word = line.substr(0, pos1); // passes
-        new_item->type = rest.substr(0, pos2);
-        new_item->def  = rest.substr(pos2+4 );
-        new_item->next = end;
+        node* new_item  = new node;
+        new_item->word  = line.substr(0, pos1);
+        new_item->type  = rest.substr(0, pos2);
+        new_item->def   = rest.substr(pos2+4 );
+        new_item->next  = end;
+        new_item->index = it++;
         end = new_item;
       }
-      // tried closing file after first "zymotic" (there are two),
-      // still crashes. I have no idea where is is happening,
-      // because the error message doesn't dive me a line number.
-      // here is the message verbatim:
-      //  terminate called after throwing an instance of 'std::out_of_range'
-      //    what():  basic_string::substr
-      //  Aborted (core dumped)
     }
   }
   return *end;
 };
 
-node NthNode(node head, int n) {
+node* NthNode(node head, int n) {
   int fail = 0;
-  for (int i=1; i<n; i++) {
-    if (!fail) {
-      head = *head.next;
-      if (head.next == NULL) { fail = 1; }
-    } else {
-      cout << "Term out of range" << endl;
-      exit(EXIT_FAILURE);
-    }
+  while (head.index != n) {
+    head = *head.next;
   }
-  return head;
+  return &head;
 }
 
 // takes the input, scans the 117,000+
@@ -148,18 +167,37 @@ node NthNode(node head, int n) {
 // its type, and definition
 void Define(node *entry, char to_define[], int sock) {
   int count = 0;
+  int exponent = 16;
+  int position = pow(2,16);
+  node* head = entry;
+  entry = NthNode(*head, position);
   string input(to_define);
   if (input.length() < 3) { // User just pressed enter
     Send(sock, Error(31, 0, 0)); // input, keep, benign
   } else {  // so, if the word is actually a word...
-    while (entry) {
-      if (entry->word == Strip(input,2)) {
+    bool done = false;
+    while (!done) {
+      cout << entry->index << " ";
+      cout << entry->word << " ";
+      int direction = Alphabetize(entry->word, Strip(input, 2));
+      if (direction == 0) {
         count++;
         string output = "  " + Bold(entry->word) + " (" + entry->type + "): ";
         output += entry->def + "\n";
         Send(sock, output);
+        done = true;
+      } else if (direction == 1) {
+        position += pow(2, exponent);
+        cout << "+ ";
+      } else if (direction == 2) {
+        position -= pow(2, exponent);
+        cout << "- ";
       }
-      entry = entry->next;
+      if (exponent != 0) {
+        exponent--;
+      } else { exponent = 0; }
+      cout << exponent << endl;
+      entry = NthNode(*head, position);
     }
   if (!count) { Send(sock, Error(30, 0, 0)); } // not in dict, keep, benign
   }

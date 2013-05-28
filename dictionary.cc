@@ -58,14 +58,17 @@ int Alphabetize(string word1, string word2) {
   if (word1 == word2) {
     return 0;
   }
+  cout << word1 << " : " << word2 << endl;
   int max = Longest(word1, word2).length();
   for (int i=0; i<max; ++i) {
     int first, second;
     if (word1.length() >= i) {
       first = int(word1[i]);
+      cout << first << endl;
     }
     if (word2.length() >= i) {
       second = int(word2[i]);
+      cout << second << "\n"  << endl;
     }
     if (first == second) {
     } else if (first < second) {
@@ -195,8 +198,10 @@ void Define(node *entry, char to_define[], int sock) {
       }
       if (exponent != 0) {
         exponent--;
-      } else { exponent = 0; }
+      } else { exit(EXIT_FAILURE); }
       cout << exponent << endl;
+      string newline = "\n";
+      cout << int(newline[0]) << endl;
       entry = NthNode(*head, position);
     }
   if (!count) { Send(sock, Error(30, 0, 0)); } // not in dict, keep, benign
